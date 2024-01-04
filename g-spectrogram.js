@@ -74,7 +74,7 @@ Polymer('g-spectrogram', {
     var times = new Uint8Array(this.analyser.frequencyBinCount);
     this.analyser.getByteTimeDomainData(times);
 
-    for (var i = 0; i < times.length; i++) {
+    for (var i = 20; i < 9000; i++) {
       var value = times[i];
       var percent = value / 256;
       var barHeight = this.height * percent;
