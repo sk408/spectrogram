@@ -102,6 +102,7 @@ Polymer('g-spectrogram', {
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
     // Iterate over the frequencies.
+    alert(this.freq.length);
     for (var i = 0; i < this.freq.length; i++) {
       var value;
       // Draw each pixel with the specific color.
@@ -156,10 +157,10 @@ Polymer('g-spectrogram', {
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
     var startFreq = 40;
-    var nyquist = this.audioContext.sampleRate/2;
-    alert(nyquist.toString());
-    // var endFreq = 9000;
-    var endFreq = nyquist - startFreq;
+    // var nyquist = this.audioContext.sampleRate/2;
+    // alert(nyquist.toString());
+    var endFreq = 9000;
+    // var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
