@@ -86,7 +86,7 @@ Polymer('g-spectrogram', {
   },
 
   renderFreqDomain: function() {
-    var minFreqIndex = this.freqToIndex(80);
+    var minFreqIndex = this.freqToIndex(40);
     var maxFreqIndex = this.freqToIndex(8000);
 
     this.analyser.getByteFrequencyData(this.freq);
@@ -134,7 +134,7 @@ Polymer('g-spectrogram', {
   canvas.height = this.height;
   var ctx = canvas.getContext('2d');
 
-  var startFreq = 80;
+  var startFreq = 40;
   var endFreq = 8000;
   var step = (endFreq - startFreq) / this.ticks;
   var yLabelOffset = 5;
