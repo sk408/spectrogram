@@ -1,151 +1,99 @@
 Polymer('g-spectrogram', {
-  // Show the controls UI.
-  controls: false,
-  // Log mode.
-  log: false,
-  // Show axis labels, and how many ticks.
-  labels: false,
-  ticks: 5,
-  speed: 2,
-  // FFT bin size,
-  fftsize: 2048,
-  oscillator: false,
-  color: false,
-
-  attachedCallback: async function() {
-    this.tempCanvas = document.createElement('canvas'),
-    console.log('Created spectrogram');
-
-    // Require user gesture before creating audio context, etc.
-    window.addEventListener('mousedown', () => this.createAudioGraph());
-    window.addEventListener('touchstart', () => this.createAudioGraph());
+  properties: {
+    controls: { type: Boolean, value: false },
+    log: { type: Boolean, value: false },
+    labels: { type: Boolean, value: false },
+    ticks: { type: Number, value: 5 },
+    speed: { type: Number, value: 2 },
+    fftsize: { type: Number, value: 2048 },
+    oscillator: { type: Boolean, value: false },
+    color: { type: Boolean, value: false },
+    minFreq: { type: Number, value: 20 },
+    maxFreq: { type: Number, value: 9000 }
   },
 
-  createAudioGraph: async function() {
-    if (this.audioContext) {
-      return;
-    }
-    // Get input from the microphone.
+  attached: function() {
+    this.audioContext = null;
+    this.tempCanvas = document.createElement('canvas');
+    window.addEventListener('mousedown', () => this.initAudioGraph());
+    window.addEventListener('touchstart', () => this.initAudioGraph());
+  },
+
+  initAudioGraph: async function() {
+    if (this.audioContext) return;
     this.audioContext = new AudioContext();
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.ctx = this.$.canvas.getContext('2d');
-      this.onStream(stream);
+      this.setupStream(stream);
     } catch (e) {
-      this.onStreamError(e);
+      console.error('Stream error:', e);
     }
+  },
+
+  setupStream: function(stream) {
+    var input = this.audioContext.createMediaStreamSource(stream);
+    this.analyser = this.audioContext.createAnalyser();
+    this.analyser.fftSize = this.fftsize;
+    input.connect(this.analyser);
+    this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
+    this.render();
   },
 
   render: function() {
-    //console.log('Render');
+    this.adjustCanvasSize();
+    this.renderFrequencyData();
+    requestAnimationFrame(this.render.bind(this));
+  },
+
+  adjustCanvasSize: function() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-
-    var didResize = false;
-    // Ensure dimensions are accurate.
-    if (this.$.canvas.width != this.width) {
-      this.$.canvas.width = this.width;
-      this.$.labels.width = this.width;
-      didResize = true;
-    }
-    if (this.$.canvas.height != this.height) {
-      this.$.canvas.height = this.height;
-      this.$.labels.height = this.height;
-      didResize = true;
-    }
-
-    //this.renderTimeDomain();
-    this.renderFreqDomain();
-
-    if (this.labels && didResize) {
+    var canvasResized = this.adjustElementSize(this.$.canvas, this.width, this.height);
+    if (this.labels && canvasResized) {
       this.renderAxesLabels();
     }
-
-    requestAnimationFrame(this.render.bind(this));
-
-    var now = new Date();
-    if (this.lastRenderTime_) {
-      this.instantaneousFPS = now - this.lastRenderTime_;
-    }
-    this.lastRenderTime_ = now;
   },
 
-  renderTimeDomain: function() {
-    var times = new Uint8Array(this.analyser.frequencyBinCount);
-    this.analyser.getByteTimeDomainData(times);
-
-    for (var i = 20; i < 9000; i++) {
-      var value = times[i];
-      var percent = value / 256;
-      var barHeight = this.height * percent;
-      var offset = this.height - barHeight - 1;
-      var barWidth = this.width/times.length;
-      this.ctx.fillStyle = 'black';
-      this.ctx.fillRect(i * barWidth, offset, 1, 1);
+  adjustElementSize: function(element, width, height) {
+    var resized = false;
+    if (element.width !== width) {
+      element.width = width;
+      resized = true;
     }
+    if (element.height !== height) {
+      element.height = height;
+      resized = true;
+    }
+    return resized;
   },
 
-  renderFreqDomain: function() {
-    this.analyser.getByteFrequencyData(this.freq);
-
-    // Check if we're getting lots of zeros.
-    if (this.freq[0] === 0) {
-      //console.warn(`Looks like zeros...`);
-    }
-
+  renderFrequencyData: function() {
+    this.analyser.getByteFrequencyData(this.freqData);
     var ctx = this.ctx;
-    // Copy the current canvas onto the temp canvas.
+    ctx.translate(-this.speed, 0);
+    ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height, 0, 0, this.width, this.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.tempCanvas.width = this.width;
     this.tempCanvas.height = this.height;
-    //console.log(this.$.canvas.height, this.tempCanvas.height);
     var tempCtx = this.tempCanvas.getContext('2d');
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
-    // Iterate over the frequencies.
-    // alert(this.freq.length);
-    for (var i = 0; i < this.freq.length; i++) {
-      var value;
-      // Draw each pixel with the specific color.
-      if (this.log) {
-        logIndex = this.logScale(i, this.freq.length);
-        value = this.freq[logIndex];
-      } else {
-        value = this.freq[i];
-      }
+    for (let i = 0; i < this.freqData.length; i++) {
+      let frequency = this.indexToFreq(i);
+      if (frequency < this.minFreq || frequency > this.maxFreq) continue;
 
-      ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-
-      var percent = i / this.freq.length;
-      var y = Math.round(percent * this.height);
-
-      // draw the line at the right side of the canvas
-      ctx.fillRect(this.width - this.speed, this.height - y,
-                   this.speed, this.speed);
+      let value = this.freqData[i];
+      ctx.fillStyle = this.color ? this.getFullColor(value) : this.getGrayColor(value);
+      let percent = i / this.freqData.length;
+      let y = Math.round(percent * this.height);
+      ctx.fillRect(this.width - this.speed, this.height - y, this.speed, this.speed);
     }
-
-    // Translate the canvas.
-    ctx.translate(-this.speed, 0);
-    // Draw the copied image.
-    ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-                  0, 0, this.width, this.height);
-
-    // Reset the transformation matrix.
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
   },
 
-  /**
-   * Given an index and the total number of entries, return the
-   * log-scaled value.
-   */
-  logScale: function(index, total, opt_base) {
-    var base = opt_base || 2;
-    var logmax = this.logBase(total + 1, base);
-    var exp = logmax * index / total;
-    return Math.round(Math.pow(base, exp) - 1);
-  },
-
-  logBase: function(val, base) {
-    return Math.log(val) / Math.log(base);
+  indexToFreq: function(index) {
+    let nyquist = this.audioContext.sampleRate / 2;
+    return nyquist / this.getFFTBinCount() * index;
   },
 
   renderAxesLabels: function() {
