@@ -157,7 +157,8 @@ Polymer('g-spectrogram', {
     var ctx = canvas.getContext('2d');
     var startFreq = 80;
     var nyquist = this.audioContext.sampleRate/2;
-    var endFreq = nyquist - startFreq;
+    var endFreq = 8000;
+    // var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
