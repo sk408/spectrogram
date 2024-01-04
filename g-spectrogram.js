@@ -134,7 +134,7 @@ Polymer('g-spectrogram', {
   canvas.height = this.height;
   var ctx = canvas.getContext('2d');
 
-  var startFreq = 40;
+  var startFreq = 20;
   var endFreq = 8000;
   var step = (endFreq - startFreq) / this.ticks;
   var yLabelOffset = 5;
