@@ -157,6 +157,7 @@ Polymer('g-spectrogram', {
     var ctx = canvas.getContext('2d');
     var startFreq = 40;
     var nyquist = this.audioContext.sampleRate/2;
+    alert(nyquist.toString());
     // var endFreq = 9000;
     var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
@@ -174,7 +175,7 @@ Polymer('g-spectrogram', {
       if (this.log) {
         // Handle a logarithmic scale.
         var logIndex = this.logScale(index, this.getFFTBinCount());
-        alert(this.getFFTBinCount().toString());
+        // alert(this.getFFTBinCount().toString());
         // Never show 0 Hz.
         freq = Math.max(20, this.indexToFreq(logIndex));
       }
