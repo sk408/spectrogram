@@ -155,7 +155,7 @@ Polymer('g-spectrogram', {
     canvas.width = this.width;
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
-    var startFreq = 440;
+    var startFreq = 80;
     var nyquist = this.audioContext.sampleRate/2;
     var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
