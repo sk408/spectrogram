@@ -86,32 +86,52 @@ Polymer('g-spectrogram', {
   },
 
   renderFreqDomain: function() {
-    var minFreqIndex = this.freqToIndex(40);
-    var maxFreqIndex = this.freqToIndex(8000);
-
     this.analyser.getByteFrequencyData(this.freq);
 
+    // Check if we're getting lots of zeros.
+    if (this.freq[0] === 0) {
+      //console.warn(`Looks like zeros...`);
+    }
+
     var ctx = this.ctx;
+    // Copy the current canvas onto the temp canvas.
     this.tempCanvas.width = this.width;
     this.tempCanvas.height = this.height;
+    //console.log(this.$.canvas.height, this.tempCanvas.height);
     var tempCtx = this.tempCanvas.getContext('2d');
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
-    for (var i = minFreqIndex; i <= maxFreqIndex; i++) {
-      var value = this.freq[i];
+    // Iterate over the frequencies.
+    for (var i = 0; i < this.freq.length; i++) {
+      var value;
+      // Draw each pixel with the specific color.
+      if (this.log) {
+        logIndex = this.logScale(i, this.freq.length);
+        value = this.freq[logIndex];
+      } else {
+        value = this.freq[i];
+      }
+
       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
-      var percent = (i - minFreqIndex) / (maxFreqIndex - minFreqIndex);
+      var percent = i / this.freq.length;
       var y = Math.round(percent * this.height);
 
-      ctx.fillRect(this.width - this.speed, this.height - y, this.speed, this.speed);
+      // draw the line at the right side of the canvas
+      ctx.fillRect(this.width - this.speed, this.height - y,
+                   this.speed, this.speed);
     }
 
+    // Translate the canvas.
     ctx.translate(-this.speed, 0);
-    ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height, 0, 0, this.width, this.height);
+    // Draw the copied image.
+    ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
+                  0, 0, this.width, this.height);
+
+    // Reset the transformation matrix.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   },
-  
+
   /**
    * Given an index and the total number of entries, return the
    * log-scaled value.
@@ -125,48 +145,51 @@ Polymer('g-spectrogram', {
 
   logBase: function(val, base) {
     return Math.log(val) / Math.log(base);
-  },renderAxesLabels: function() {
-  if (!this.audioContext) {
-    return;
-  }
-  var canvas = this.$.labels;
-  canvas.width = this.width;
-  canvas.height = this.height;
-  var ctx = canvas.getContext('2d');
+  },
 
-  var startFreq = 20;
-  var endFreq = 8000;
-  var step = (endFreq - startFreq) / this.ticks;
-  var yLabelOffset = 5;
-
-  // Render the vertical frequency axis.
-  for (var i = 0; i <= this.ticks; i++) {
-    var freq;
-    var index;
-    if (this.log) {
-      var logRatio = (Math.log(i + 1) - Math.log(1)) / (Math.log(this.ticks + 1) - Math.log(1));
-      freq = startFreq * Math.pow(endFreq / startFreq, logRatio);
-      index = this.freqToIndex(freq);
-    } else {
-      freq = startFreq + (step * i);
-      index = this.freqToIndex(freq);
+  renderAxesLabels: function() {
+    if (!this.audioContext) {
+      return;
     }
-
-    var percent = (index - this.freqToIndex(startFreq)) / (this.freqToIndex(endFreq) - this.freqToIndex(startFreq));
-    var y = (1 - percent) * this.height;
-    var x = this.width - 60;
-
-    var label = this.formatFreq(freq);
-    var units = this.formatUnits(freq);
-    ctx.font = '16px Inconsolata';
-    ctx.textAlign = 'right';
-    ctx.fillText(label, x, y + yLabelOffset);
-    ctx.textAlign = 'left';
-    ctx.fillText(units, x + 10, y + yLabelOffset);
-    ctx.fillRect(x + 40, y, 30, 2);
-  }
-},
-
+    var canvas = this.$.labels;
+    canvas.width = this.width;
+    canvas.height = this.height;
+    var ctx = canvas.getContext('2d');
+    var startFreq = 40;
+    var nyquist = this.audioContext.sampleRate/2;
+    var endFreq = 9000;
+    // var endFreq = nyquist - startFreq;
+    var step = (endFreq - startFreq) / this.ticks;
+    var yLabelOffset = 5;
+    // Render the vertical frequency axis.
+    for (var i = 0; i <= this.ticks; i++) {
+      var freq = startFreq + (step * i);
+      // Get the y coordinate from the current label.
+      var index = this.freqToIndex(freq);
+      var percent = index / this.getFFTBinCount();
+      var y = (1-percent) * this.height;
+      var x = this.width - 60;
+      // Get the value for the current y coordinate.
+      var label;
+      if (this.log) {
+        // Handle a logarithmic scale.
+        var logIndex = this.logScale(index, this.getFFTBinCount());
+        // Never show 0 Hz.
+        freq = Math.max(20, this.indexToFreq(logIndex));
+      }
+      var label = this.formatFreq(freq);
+      var units = this.formatUnits(freq);
+      ctx.font = '16px Inconsolata';
+      // Draw the value.
+      ctx.textAlign = 'right';
+      ctx.fillText(label, x, y + yLabelOffset);
+      // Draw the units.
+      ctx.textAlign = 'left';
+      ctx.fillText(units, x + 10, y + yLabelOffset);
+      // Draw a tick mark.
+      ctx.fillRect(x + 40, y, 30, 2);
+    }
+  },
 
   clearAxesLabels: function() {
     var canvas = this.$.labels;
