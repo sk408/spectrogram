@@ -125,8 +125,7 @@ Polymer('g-spectrogram', {
 
   logBase: function(val, base) {
     return Math.log(val) / Math.log(base);
-  },
-renderAxesLabels: function() {
+  },renderAxesLabels: function() {
   if (!this.audioContext) {
     return;
   }
@@ -142,8 +141,17 @@ renderAxesLabels: function() {
 
   // Render the vertical frequency axis.
   for (var i = 0; i <= this.ticks; i++) {
-    var freq = startFreq + (step * i);
-    var index = this.freqToIndex(freq);
+    var freq;
+    var index;
+    if (this.log) {
+      var logRatio = (Math.log(i + 1) - Math.log(1)) / (Math.log(this.ticks + 1) - Math.log(1));
+      freq = startFreq * Math.pow(endFreq / startFreq, logRatio);
+      index = this.freqToIndex(freq);
+    } else {
+      freq = startFreq + (step * i);
+      index = this.freqToIndex(freq);
+    }
+
     var percent = (index - this.freqToIndex(startFreq)) / (this.freqToIndex(endFreq) - this.freqToIndex(startFreq));
     var y = (1 - percent) * this.height;
     var x = this.width - 60;
@@ -158,6 +166,7 @@ renderAxesLabels: function() {
     ctx.fillRect(x + 40, y, 30, 2);
   }
 },
+
 
   clearAxesLabels: function() {
     var canvas = this.$.labels;
