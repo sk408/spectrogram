@@ -8,7 +8,7 @@ Polymer('g-spectrogram', {
   ticks: 5,
   speed: 2,
   // FFT bin size,
-  fftsize: 2048,
+  fftsize: 4096,
   oscillator: false,
   color: false,
 
@@ -41,7 +41,7 @@ Polymer('g-spectrogram', {
     if (this.audioContext) {
       return;
     }
-    this.audioContext = new AudioContext({sampleRate: 22000});
+    this.audioContext = new AudioContext({sampleRate: 25000});
     try {
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
       this.ctx = this.$.canvas.getContext('2d');
