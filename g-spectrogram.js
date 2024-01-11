@@ -17,7 +17,7 @@ Polymer('g-spectrogram', {
     console.log('Created spectrogram');
 
     // Require user gesture before creating audio context, etc.
-    window.addEventListener('mousedown', () => this.createAudioGraph());
+    window.addEventListener('mousedown', () => { if (this.audioContext) { this.audioContext.suspend(); return; } else { this.createAudioGraph()); }
     window.addEventListener('touchstart', () => this.createAudioGraph());
   },
 
