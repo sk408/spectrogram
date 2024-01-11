@@ -3,7 +3,7 @@
     "name": "Spectrogram & Oscillator",
     "icons": [
         {
-            "src": "images/icon.png",
+            "src": "https://cdn-icons-png.flaticon.com/512/2938/2938687.png",
             "sizes": "192x192",
             "type": "image/png"
         }
