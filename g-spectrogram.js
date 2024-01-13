@@ -1,4 +1,4 @@
-class Spectrogram {
+class Spectrog {
   constructor(canvasElement) {
     this.canvas = canvasElement;
     this.ctx = this.canvas.getContext('2d');
