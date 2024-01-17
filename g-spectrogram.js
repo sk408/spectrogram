@@ -12,21 +12,57 @@ Polymer('g-spectrogram', {
   // oscillator: false,
   color: true,
   animate1: true,
-
   attachedCallback: async function() {
-  this.tempCanvas = document.createElement('canvas'),
-  console.log('Created spectrogram');
+    this.tempCanvas = document.createElement('canvas'),
+    console.log('Created spectrogram');
+
+    // Require user gesture before creating audio context, etc.
     let debounce;
     const createAudioGraphDebounced = () => {
       clearTimeout(debounce);
-      debounce = setTimeout(() => this.createAudioGraph(), 120);
+      debounce = setTimeout(() => this.createAudioGraph(), 500);
     };
+
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let time = 0;
+
+    const handleGesture = (event) => {
+      const elapsedTime = new Date().getTime() - time;
+      const touchendX = event.changedTouches[0].screenX;
+      const touchendY = event.changedTouches[0].screenY;
+      const dx = touchendX - touchstartX;
+      const dy = touchendY - touchstartY;
+      const dist = Math.sqrt(dx*dx + dy*dy); // distance
+
+      if (dist < 10 && elapsedTime < 200) {
+        createAudioGraphDebounced();
+      }
+    };
+
     window.addEventListener('mousedown', createAudioGraphDebounced);
-    window.addEventListener('touchstart', createAudioGraphDebounced);
-    window.addEventListener('touchmove', function(event) {
-  event.preventDefault();
-}, { passive: false });
+    window.addEventListener('touchstart', (event) => {
+      touchstartX = event.changedTouches[0].screenX;
+      touchstartY = event.changedTouches[0].screenY;
+      time = new Date().getTime();
+    });
+    window.addEventListener('touchend', handleGesture);
   },
+
+//   attachedCallback: async function() {
+//   this.tempCanvas = document.createElement('canvas'),
+//   console.log('Created spectrogram');
+//     let debounce;
+//     const createAudioGraphDebounced = () => {
+//       clearTimeout(debounce);
+//       debounce = setTimeout(() => this.createAudioGraph(), 120);
+//     };
+//     window.addEventListener('mousedown', createAudioGraphDebounced);
+//     window.addEventListener('touchstart', createAudioGraphDebounced);
+//     window.addEventListener('touchmove', function(event) {
+//   event.preventDefault();
+// }, { passive: false });
+//   },
   
   // createAudioGraph: async function() {
   //   if (this.audioContext) {
