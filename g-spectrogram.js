@@ -97,7 +97,7 @@ Polymer('g-spectrogram', {
       this.renderAxesLabels();
     }
       requestAnimationFrame(this.render.bind(this));
-    
+    console.log(this.animate);
     var now = new Date();
     if (this.lastRenderTime_) {
       this.instantaneousFPS = now - this.lastRenderTime_;
