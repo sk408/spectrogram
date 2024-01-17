@@ -12,7 +12,7 @@ Polymer('g-spectrogram', {
   // oscillator: false,
   color: true,
   animate1: true,
-  attachedCallback: async function() {
+attachedCallback: async function() {
     this.tempCanvas = document.createElement('canvas'),
     console.log('Created spectrogram');
 
@@ -47,7 +47,11 @@ Polymer('g-spectrogram', {
       time = new Date().getTime();
     });
     window.addEventListener('touchend', handleGesture);
+    window.addEventListener('touchmove', function(event) {
+      event.preventDefault();
+    }, { passive: false });
   },
+
 
 //   attachedCallback: async function() {
 //   this.tempCanvas = document.createElement('canvas'),
