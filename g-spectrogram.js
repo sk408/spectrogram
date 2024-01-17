@@ -34,7 +34,7 @@ attachedCallback: async function() {
       const dx = touchendX - touchstartX;
       const dy = touchendY - touchstartY;
       const dist = Math.sqrt(dx*dx + dy*dy); // distance
-  if (elapsedTime < 150 && elapsedTime > 15) {
+  if (elapsedTime < 150 && elapsedTime > 25) {
     event.preventDefault();
   }
       if (dist < 25 && elapsedTime < 200) {
