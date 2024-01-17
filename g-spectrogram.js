@@ -43,7 +43,10 @@ Polymer('g-spectrogram', {
       //   this.render(); return;
       // }
           if(this.animate1) {
-      requestAnimationFrame(this.render.bind(this));
+            if(this.reqAnimate = 0) {
+            this.reqAnimate = 1;
+            requestAnimationFrame(this.render.bind(this));
+            }
     }
       return;
     }
