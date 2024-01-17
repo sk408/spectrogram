@@ -9,8 +9,8 @@ Polymer('g-spectrogram', {
   speed: 2,
   // FFT bin size,
   fftsize: 4096,
-  oscillator: false,
-  color: false,
+  // oscillator: false,
+  color: true,
   animate1: true,
 
   attachedCallback: async function() {
