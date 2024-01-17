@@ -13,15 +13,14 @@ Polymer('g-spectrogram', {
   color: false,
 
   attachedCallback: async function() {
-    this.tempCanvas = document.createElement('canvas'),
-    console.log('Created spectrogram');
+  this.tempCanvas = document.createElement('canvas'),
+  console.log('Created spectrogram');
 
-    // Require user gesture before creating audio context, etc.
-    // window.addEventListener('mousedown', () => { if (this.audioContext) { this.audioContext.suspend(); return; } else { this.createAudioGraph(); } }); 
-    window.addEventListener('mousedown', () => this.createAudioGraph());
-    window.addEventListener('touchstart', () => this.createAudioGraph());
-  },
-
+  // Require user gesture before creating audio context, etc.
+  window.addEventListener('mousedown', () => this.createAudioGraph());
+  window.addEventListener('touchstart', () => this.createAudioGraph());
+},
+  
   // createAudioGraph: async function() {
   //   if (this.audioContext) {
   //     return;
