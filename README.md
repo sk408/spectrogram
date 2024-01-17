@@ -21,28 +21,7 @@ Having a spectrogram is incredibly handy for a lot of the work I've done
 recently. So a while ago, I built one that satisfies my needs. It runs
 in a full-screen, using the microphone input as the source.
 
-It also includes an oscillator, which plays a sine wave at the frequency
-of your pointer. It also shows you the frequency that it plays back, and
-plots a short buffer of pointer positions. This is handy for measuring
-internal latency:
-
 ![Latency estimation](latency.png)
-
-Having the oscillator built-in is also pretty fun. You can [send morse
-code][morse] (short short short, long long, short short long, short
-short short), [scan for radio stations][radio], make 8-bit character
-[dying sound effects][sfx], simulate [aliens, ghosts and
-theremins][ghosts], and annoy [small, annoying dogs][dogs].
-
-I use the tool mostly in Chrome, but it also works in Firefox.
-Unfortunately no other browser currently has both `getUserMedia` and Web
-Audio API support.
-
-[morse]: sounds/morse.wav
-[radio]: sounds/radio.wav
-[sfx]: sounds/sfx.wav
-[ghosts]: sounds/ghosts.wav
-[dogs]: sounds/dogs.wav
 
 # Configuration parameters
 
@@ -56,9 +35,6 @@ which shows up if the `controls` attribute is set to true.
 - `labels` (boolean): enables y-axis labels.
 - `ticks` (number): how many y labels to show.
 - `color` (boolean): turns on color mode (grayscale by default).
-- `oscillator` (boolean): enables an oscillator overlay component. When
-  you click anywhere in the spectrogram, a sine wave plays corresponding
-  to the frequency you click on.
 
 
 # Using the Polymer component
