@@ -39,9 +39,9 @@ Polymer('g-spectrogram', {
   
   createAudioGraph: async function() {
     if (this.audioContext) {
-      if(this.animate1) {
-        this.render(); return;
-      }
+      // if(this.animate1) {
+      //   this.render(); return;
+      // }
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 30000});
@@ -76,7 +76,7 @@ Polymer('g-spectrogram', {
     this.render();
   },
   render: function() {
-  if (!this.animate1) { return; }
+  // if (!this.animate1) { return; }
     //console.log('Render');
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -100,7 +100,9 @@ Polymer('g-spectrogram', {
     if (this.labels && didResize) {
       this.renderAxesLabels();
     }
+    if(this.animate1) {
       requestAnimationFrame(this.render.bind(this));
+    }
     console.log(this.animate1);
     var now = new Date();
     if (this.lastRenderTime_) {
