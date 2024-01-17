@@ -42,6 +42,9 @@ Polymer('g-spectrogram', {
       // if(this.animate1) {
       //   this.render(); return;
       // }
+          if(this.animate1) {
+      requestAnimationFrame(this.render.bind(this));
+    }
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 30000});
