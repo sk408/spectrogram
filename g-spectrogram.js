@@ -11,6 +11,7 @@ Polymer('g-spectrogram', {
   fftsize: 4096,
   oscillator: false,
   color: false,
+  animate1: true,
 
   attachedCallback: async function() {
   this.tempCanvas = document.createElement('canvas'),
@@ -72,7 +73,7 @@ Polymer('g-spectrogram', {
     this.render();
   },
   render: function() {
-  if (!this.animate) { return; }
+  if (!this.animate1) { return; }
     //console.log('Render');
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -97,7 +98,7 @@ Polymer('g-spectrogram', {
       this.renderAxesLabels();
     }
       requestAnimationFrame(this.render.bind(this));
-    console.log(this.animate);
+    console.log(this.animate1);
     var now = new Date();
     if (this.lastRenderTime_) {
       this.instantaneousFPS = now - this.lastRenderTime_;
