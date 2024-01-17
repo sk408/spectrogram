@@ -48,7 +48,7 @@ Polymer('g-spectrogram', {
             }
       if(this.animate1) {
         this.animate1 = false;
-      }                                      }
+      }                                      
           // if(this.animate1) {
           //   if(this.reqAnimate == 0) {
           //   this.reqAnimate = 1;
