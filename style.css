@@ -1,6 +1,7 @@
 body, html {
   margin: 0;
   padding: 0;
+  touch-action: none;
 }
 
 #about {
@@ -17,3 +18,5 @@ body, html {
   font-family: 'Inconsolata';
   font-size: 120%;
 }
+
+
