@@ -1,7 +1,7 @@
 <link rel="import" href="./bower_components/polymer/polymer.html">
 
 
-<polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color animate">
+<polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color animate1">
   <template>
     <style>
       :host {
@@ -44,7 +44,7 @@
     </div>
     <div class="config">
     <label for="animate">Animate</label>
-    <input type="checkbox" id="animate" checked="{{animate}}">
+    <input type="checkbox" id="animate" checked="{{animate1}}">
     </div>
     <template if="{{labels}}">
       <div class="config">
