@@ -46,7 +46,7 @@ Polymer('g-spectrogram', {
         this.animate1 = true;
         requestAnimationFrame(this.render.bind(this));
             }
-      if(this.animate1) {
+      else if(this.animate1) {
         this.animate1 = false;
       }                                      
           // if(this.animate1) {
@@ -113,13 +113,13 @@ Polymer('g-spectrogram', {
     if (this.labels && didResize) {
       this.renderAxesLabels();
     }
-    if(!this.animate1) {
-      this.reqAnimate = 0;
-    }
+    // if(!this.animate1) {
+    //   this.reqAnimate = 0;
+    // }
     if(this.animate1) {
       requestAnimationFrame(this.render.bind(this));
     }
-    console.log(this.animate1);
+    // console.log(this.animate1);
     var now = new Date();
     if (this.lastRenderTime_) {
       this.instantaneousFPS = now - this.lastRenderTime_;
