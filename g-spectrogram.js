@@ -35,7 +35,7 @@ attachedCallback: async function() {
       const dy = touchendY - touchstartY;
       const dist = Math.sqrt(dx*dx + dy*dy); // distance
 
-      if (dist < 10 && elapsedTime < 200) {
+      if (dist < 25 && elapsedTime < 200) {
         createAudioGraphDebounced();
       }
     };
