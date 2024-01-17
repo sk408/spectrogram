@@ -40,7 +40,7 @@ Polymer('g-spectrogram', {
   createAudioGraph: async function() {
     if (this.audioContext) {
       if(this.animate1) {
-        render(); return;
+        this.render(); return;
       }
       return;
     }
