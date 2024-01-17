@@ -43,7 +43,7 @@ Polymer('g-spectrogram', {
       //   this.render(); return;
       // }
           if(this.animate1) {
-            if(this.reqAnimate = 0) {
+            if(this.reqAnimate == 0) {
             this.reqAnimate = 1;
             requestAnimationFrame(this.render.bind(this));
             }
@@ -105,6 +105,9 @@ Polymer('g-spectrogram', {
 
     if (this.labels && didResize) {
       this.renderAxesLabels();
+    }
+    if(!this.animate1) {
+      this.reqAnimate = 0;
     }
     if(this.animate1) {
       requestAnimationFrame(this.render.bind(this));
