@@ -72,6 +72,7 @@ Polymer('g-spectrogram', {
     this.render();
   },
   render: function() {
+  if (!this.animate) { return; }
     //console.log('Render');
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -95,10 +96,8 @@ Polymer('g-spectrogram', {
     if (this.labels && didResize) {
       this.renderAxesLabels();
     }
-  if (this.animate) {
-    requestAnimationFrame(this.render.bind(this));
-  }
-   
+      requestAnimationFrame(this.render.bind(this));
+    
     var now = new Date();
     if (this.lastRenderTime_) {
       this.instantaneousFPS = now - this.lastRenderTime_;
