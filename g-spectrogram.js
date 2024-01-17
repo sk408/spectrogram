@@ -16,11 +16,14 @@ Polymer('g-spectrogram', {
   attachedCallback: async function() {
   this.tempCanvas = document.createElement('canvas'),
   console.log('Created spectrogram');
-
-  // Require user gesture before creating audio context, etc.
-  window.addEventListener('mousedown', () => this.createAudioGraph());
-  window.addEventListener('touchstart', () => this.createAudioGraph());
-},
+    let debounce;
+    const createAudioGraphDebounced = () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => this.createAudioGraph(), 120);
+    };
+    window.addEventListener('mousedown', createAudioGraphDebounced);
+    window.addEventListener('touchstart', createAudioGraphDebounced);
+  },
   
   // createAudioGraph: async function() {
   //   if (this.audioContext) {
