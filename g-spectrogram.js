@@ -54,7 +54,7 @@ Polymer('g-spectrogram', {
           //   this.reqAnimate = 1;
           //   requestAnimationFrame(this.render.bind(this));
           //   }
-    }
+    
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 30000});
