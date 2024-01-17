@@ -39,6 +39,9 @@ Polymer('g-spectrogram', {
   
   createAudioGraph: async function() {
     if (this.audioContext) {
+      if(this.animate1) {
+        render(); return;
+      }
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 30000});
