@@ -18,15 +18,7 @@ Polymer('g-spectrogram', {
   console.log('Created spectrogram');
 
   // Require user gesture before creating audio context, etc.
-  window.addEventListener('mousedown', () => { this.createAudioGraph(); 
-                                                        if(!this.animate1) {
-                                                          this.animate1 = true;
-            requestAnimationFrame(this.render.bind(this));
-            }
-                                              if(this.animate1) {
-                                                this.animate1 = false;
-                                              }
-                                             } );
+  window.addEventListener('mousedown', () => this.createAudioGraph());
   window.addEventListener('touchstart', () => this.createAudioGraph());
 },
   
@@ -50,6 +42,13 @@ Polymer('g-spectrogram', {
       // if(this.animate1) {
       //   this.render(); return;
       // }
+      if(!this.animate1) {
+        this.animate1 = true;
+        requestAnimationFrame(this.render.bind(this));
+            }
+      if(this.animate1) {
+        this.animate1 = false;
+      }                                      }
           // if(this.animate1) {
           //   if(this.reqAnimate == 0) {
           //   this.reqAnimate = 1;
