@@ -23,6 +23,9 @@ Polymer('g-spectrogram', {
     };
     window.addEventListener('mousedown', createAudioGraphDebounced);
     window.addEventListener('touchstart', createAudioGraphDebounced);
+    window.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+}, { passive: false });
   },
   
   // createAudioGraph: async function() {
