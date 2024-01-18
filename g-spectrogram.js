@@ -38,7 +38,9 @@ attachedCallback: async function() {
     event.preventDefault();
   }
       if (dist < 25 && elapsedTime < 50) {
-        createAudioGraphDebounced();
+  if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
+    createAudioGraphDebounced();
+  }
       }
     };
   function onKeyDown(e)
@@ -48,19 +50,6 @@ attachedCallback: async function() {
 }
 	
 window.addEventListener('mousedown', function(event) {
-	function replacer(key, value) {
-console.log(key.toString());
-		console.log(value.toString());
-}
-  // Check if the event's target is not a control checkbox
-	if(event.target) { 
-		console.log(event.target.toString());
-		console.log(JSON.stringify(event.target, replacer));
-
-	};
-  if (event.target && event.target.id) {
-    console.log(event.target.id.toString());
-  }
   if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
   }
