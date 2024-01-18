@@ -2,9 +2,9 @@ Polymer('g-spectrogram', {
   // Show the controls UI.
   controls: false,
   // Log mode.
-  log: false,
+  log: true,
   // Show axis labels, and how many ticks.
-  labels: false,
+  labels: true,
   ticks: 5,
   speed: 2,
   // FFT bin size,
