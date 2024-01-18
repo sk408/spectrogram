@@ -41,7 +41,13 @@ attachedCallback: async function() {
         createAudioGraphDebounced();
       }
     };
+  function onKeyDown(e)
+{
+	if (e.key === " ")
+		createAudioGraphDebounced();
+}
     window.addEventListener('mousedown', createAudioGraphDebounced);
+  window.addEventListener("keydown", onKeyDown);
     window.addEventListener('touchstart', (event) => {
       touchstartX = event.changedTouches[0].screenX;
       touchstartY = event.changedTouches[0].screenY;
