@@ -41,7 +41,6 @@ attachedCallback: async function() {
         createAudioGraphDebounced();
       }
     };
-
     window.addEventListener('mousedown', createAudioGraphDebounced);
     window.addEventListener('touchstart', (event) => {
       touchstartX = event.changedTouches[0].screenX;
@@ -53,38 +52,6 @@ attachedCallback: async function() {
       event.preventDefault();
     }, { passive: false });
   },
-
-
-//   attachedCallback: async function() {
-//   this.tempCanvas = document.createElement('canvas'),
-//   console.log('Created spectrogram');
-//     let debounce;
-//     const createAudioGraphDebounced = () => {
-//       clearTimeout(debounce);
-//       debounce = setTimeout(() => this.createAudioGraph(), 120);
-//     };
-//     window.addEventListener('mousedown', createAudioGraphDebounced);
-//     window.addEventListener('touchstart', createAudioGraphDebounced);
-//     window.addEventListener('touchmove', function(event) {
-//   event.preventDefault();
-// }, { passive: false });
-//   },
-  
-  // createAudioGraph: async function() {
-  //   if (this.audioContext) {
-  //     return;
-  //   }
-  //   // Get input from the microphone.
-  //   this.audioContext = new AudioContext();
-  //   try {
-  //     const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-  //     this.ctx = this.$.canvas.getContext('2d');
-  //     this.onStream(stream);
-  //   } catch (e) {
-  //     this.onStreamError(e);
-  //   }
-  // },
-  
   createAudioGraph: async function() {
     if (this.audioContext) {
       // if(this.animate1) {
@@ -97,12 +64,6 @@ attachedCallback: async function() {
       else if(this.animate1) {
         this.animate1 = false;
       }                                      
-          // if(this.animate1) {
-          //   if(this.reqAnimate == 0) {
-          //   this.reqAnimate = 1;
-          //   requestAnimationFrame(this.render.bind(this));
-          //   }
-    
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 30000});
@@ -137,11 +98,8 @@ attachedCallback: async function() {
     this.render();
   },
   render: function() {
-  // if (!this.animate1) { return; }
-    //console.log('Render');
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-
     var didResize = false;
     // Ensure dimensions are accurate.
     if (this.$.canvas.width != this.width) {
@@ -154,20 +112,15 @@ attachedCallback: async function() {
       this.$.labels.height = this.height;
       didResize = true;
     }
-
     //this.renderTimeDomain();
     this.renderFreqDomain();
 
     if (this.labels && didResize) {
       this.renderAxesLabels();
     }
-    // if(!this.animate1) {
-    //   this.reqAnimate = 0;
-    // }
     if(this.animate1) {
       requestAnimationFrame(this.render.bind(this));
     }
-    // console.log(this.animate1);
     var now = new Date();
     if (this.lastRenderTime_) {
       this.instantaneousFPS = now - this.lastRenderTime_;
