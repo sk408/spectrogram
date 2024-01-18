@@ -5,8 +5,8 @@ Polymer('g-spectrogram', {
   log: true,
   // Show axis labels, and how many ticks.
   labels: true,
-  ticks: 5,
-  speed: 2,
+  ticks: 9,
+  speed: 6,
   // FFT bin size,
   fftsize: 4096,
   // oscillator: false,
