@@ -82,7 +82,7 @@ window.addEventListener('mousedown', function(event) {
       }                                      
       return;
     }
-    this.audioContext = new AudioContext({sampleRate: 30000});
+    this.audioContext = new AudioContext({sampleRate: 48000});
     try {
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
       this.ctx = this.$.canvas.getContext('2d');
