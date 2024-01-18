@@ -39,7 +39,7 @@ attachedCallback: async function() {
   }
 	     if (!this.audioContext) { createAudioGraphDebounced(); } 
 	   alert(dist);
-      if (dist > 1 && elapsedTime < 250) {
+  if (elapsedTime < 250 && elapsedTime > 5) {
   // if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
   // }
