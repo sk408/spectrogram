@@ -46,7 +46,12 @@ attachedCallback: async function() {
 	if (e.key === " ")
 		createAudioGraphDebounced();
 }
-    window.addEventListener('mousedown', createAudioGraphDebounced);
+window.addEventListener('mousedown', function(event) {
+  // Check if the event's target is not a control checkbox
+  if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
+    createAudioGraphDebounced();
+  }
+});
   window.addEventListener("keydown", onKeyDown);
     window.addEventListener('touchstart', (event) => {
       touchstartX = event.changedTouches[0].screenX;
