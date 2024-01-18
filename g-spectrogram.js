@@ -49,10 +49,8 @@ attachedCallback: async function() {
 	
 window.addEventListener('mousedown', function(event) {
 	function replacer(key, value) {
-  if (value === window) {
-    return;
-  }
-  return value;
+console.log(key.toString());
+		console.log(value.toString());
 }
   // Check if the event's target is not a control checkbox
 	if(event.target) { 
