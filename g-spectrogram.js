@@ -46,11 +46,18 @@ attachedCallback: async function() {
 	if (e.key === " ")
 		createAudioGraphDebounced();
 }
+	
 window.addEventListener('mousedown', function(event) {
+	function replacer(key, value) {
+  if (value === window) {
+    return;
+  }
+  return value;
+}
   // Check if the event's target is not a control checkbox
 	if(event.target) { 
 		console.log(event.target.toString());
-		console.log(JSON.stringify(event.target, null, 4));
+		console.log(JSON.stringify(event.target, replacer));
 
 	};
   if (event.target && event.target.id) {
@@ -71,6 +78,7 @@ window.addEventListener('mousedown', function(event) {
       event.preventDefault();
     }, { passive: false });
   },
+	
   createAudioGraph: async function() {
     if (this.audioContext) {
       // if(this.animate1) {
