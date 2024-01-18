@@ -34,13 +34,13 @@ attachedCallback: async function() {
       const dx = touchendX - touchstartX;
       const dy = touchendY - touchstartY;
       const dist = Math.sqrt(dx*dx + dy*dy); // distance
-  if (elapsedTime < 50 && elapsedTime > 15) {
+  if (elapsedTime < 250 && elapsedTime > 15) {
     event.preventDefault();
   }
-      if (dist < 25 && elapsedTime < 50) {
-  if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
+      if (dist > 5 && elapsedTime < 250) {
+  // if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
-  }
+  // }
       }
     };
   function onKeyDown(e)
