@@ -20,7 +20,7 @@ attachedCallback: async function() {
     let debounce;
     const createAudioGraphDebounced = () => {
       clearTimeout(debounce);
-      debounce = setTimeout(() => this.createAudioGraph(), 500);
+      debounce = setTimeout(() => this.createAudioGraph(), 100);
     };
 
     let touchstartX = 0;
@@ -34,10 +34,10 @@ attachedCallback: async function() {
       const dx = touchendX - touchstartX;
       const dy = touchendY - touchstartY;
       const dist = Math.sqrt(dx*dx + dy*dy); // distance
-  if (elapsedTime < 150 && elapsedTime > 25) {
+  if (elapsedTime < 50 && elapsedTime > 15) {
     event.preventDefault();
   }
-      if (dist < 25 && elapsedTime < 200) {
+      if (dist < 25 && elapsedTime < 50) {
         createAudioGraphDebounced();
       }
     };
