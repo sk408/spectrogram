@@ -48,6 +48,7 @@ attachedCallback: async function() {
 }
 window.addEventListener('mousedown', function(event) {
   // Check if the event's target is not a control checkbox
+	if(event.target) { console.log(event.target.toString()); };
   if (event.target && event.target.id) {
     console.log(event.target.id.toString());
   }
