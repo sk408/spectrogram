@@ -1,5 +1,5 @@
 Polymer('g-spectrogram-controls', {
-  log: false,
+  log: true,
   labels: true,
   ticks: 5,
 
