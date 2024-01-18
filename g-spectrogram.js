@@ -37,7 +37,7 @@ attachedCallback: async function() {
   if (elapsedTime < 250 && elapsedTime > 15) {
     event.preventDefault();
   }
-      if (dist > 5 && elapsedTime < 250) {
+      if (dist > 15 && elapsedTime < 250) {
   // if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
   // }
