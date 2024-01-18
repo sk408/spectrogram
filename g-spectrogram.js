@@ -34,10 +34,10 @@ attachedCallback: async function() {
       const dx = touchendX - touchstartX;
       const dy = touchendY - touchstartY;
       const dist = Math.sqrt(dx*dx + dy*dy); // distance
-  if (elapsedTime < 250 && elapsedTime > 15) {
+  if (elapsedTime < 250 && elapsedTime > 5) {
     event.preventDefault();
   }
-      if (dist > 15 && elapsedTime < 250) {
+      if (dist > 3 && elapsedTime < 250) {
   // if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
   // }
