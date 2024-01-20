@@ -109,7 +109,7 @@ createAudioGraph: async function() {
     } catch (e) {
         this.onStreamError(e);
     }
-}
+},
 
   onStream: function(stream) {
     var input = this.audioContext.createMediaStreamSource(stream);
