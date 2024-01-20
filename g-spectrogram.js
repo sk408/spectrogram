@@ -1,3 +1,19 @@
+if (!navigator.mediaDevices?.enumerateDevices) {
+  console.log("enumerateDevices() not supported.");
+} else {
+  // List cameras and microphones.
+  navigator.mediaDevices
+    .enumerateDevices()
+    .then((devices) => {
+      devices.forEach((device) => {
+        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+      });
+    })
+    .catch((err) => {
+      console.error(`${err.name}: ${err.message}`);
+    });
+}
+
 Polymer('g-spectrogram', {
   // Show the controls UI.
   controls: false,
@@ -84,6 +100,21 @@ window.addEventListener('mousedown', function(event) {
     }
     this.audioContext = new AudioContext({sampleRate: 48000});
     try {
+if (!navigator.mediaDevices?.enumerateDevices) {
+  console.log("enumerateDevices() not supported.");
+} else {
+  // List cameras and microphones.
+  navigator.mediaDevices
+    .enumerateDevices()
+    .then((devices) => {
+      devices.forEach((device) => {
+        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+      });
+    })
+    .catch((err) => {
+      console.error(`${err.name}: ${err.message}`);
+    });
+}
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
       this.ctx = this.$.canvas.getContext('2d');
       
