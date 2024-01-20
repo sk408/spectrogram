@@ -68,45 +68,48 @@ window.addEventListener('mousedown', function(event) {
     }, { passive: false });
   },
 	
-  createAudioGraph: async function() {
+createAudioGraph: async function() {
     if (this.audioContext) {
-      // if(this.animate1) {
-      //   this.render(); return;
-      // }
       if(!this.animate1) {
         this.animate1 = true;
         requestAnimationFrame(this.render.bind(this));
-            }
-      else if(this.animate1) {
+      } else if(this.animate1) {
         this.animate1 = false;
       }                                      
       return;
     }
     this.audioContext = new AudioContext({sampleRate: 48000});
     try {
-if (!navigator.mediaDevices?.enumerateDevices) {
-  console.log("enumerateDevices() not supported.");
-} else {
-  // List cameras and microphones.
-  navigator.mediaDevices
-    .enumerateDevices()
-    .then((devices) => {
-      devices.forEach((device) => {
-        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
-      });
-    })
-    .catch((err) => {
-      console.error(`${err.name}: ${err.message}`);
-    });
-}
-      const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-      this.ctx = this.$.canvas.getContext('2d');
-      
-      this.onStream(stream);
+        if (!navigator.mediaDevices?.enumerateDevices) {
+            console.log("enumerateDevices() not supported.");
+        } else {
+            // List cameras and microphones.
+            let mics = [];
+            await navigator.mediaDevices
+                .enumerateDevices()
+                .then((devices) => {
+                    devices.forEach((device) => {
+                        if(device.kind === 'audioinput') {
+                            mics.push(device);
+                            console.log(`Microphone: ${device.label} id = ${device.deviceId}`);
+                        }
+                    });
+                })
+                .catch((err) => {
+                    console.error(`${err.name}: ${err.message}`);
+                });
+
+            // Let the user select a microphone
+            let selectedMic = prompt("Please enter the id of the microphone you want to use", mics[0]?.deviceId);
+            const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            this.ctx = this.$.canvas.getContext('2d');
+            this.onStream(stream);
+        }
     } catch (e) {
-      this.onStreamError(e);
+        this.onStreamError(e);
     }
-  },
+}
 
   onStream: function(stream) {
     var input = this.audioContext.createMediaStreamSource(stream);
