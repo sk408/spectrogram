@@ -397,7 +397,8 @@ renderFreqDomain: function () {
         var freq = this.melToFreq(mel);
         // Get the y coordinate from the current label.
         var index = this.freqToIndex(freq);
-        var percent = index / this.getFFTBinCount();
+        var melIndex = this.freqToMel(freq);
+        var percent = (melIndex - startMel) / (endMel - startMel);
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
