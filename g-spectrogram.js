@@ -117,9 +117,9 @@ createAudioGraph: async function() {
         this.onStreamError(e);
     }
 },
-createDecibelMeter: function(stream) {
+createDecibelMeter: function() {
   console.log("test");
-  console.log(stream);
+  // console.log(stream);
 
   // Create an AnalyserNode
   // var analyser = this.analyser;
@@ -172,7 +172,7 @@ createDecibelMeter: function(stream) {
 
     this.analyser = analyser;
     this.freq = new Uint8Array(this.analyser.frequencyBinCount);
-    this.createDecibelMeter(stream);
+    this.createDecibelMeter();
 
     this.render();
   },
@@ -224,11 +224,6 @@ createDecibelMeter: function(stream) {
 
   renderFreqDomain: function() {
     this.analyser.getByteFrequencyData(this.freq);
-
-    // Check if we're getting lots of zeros.
-    if (this.freq[0] === 0) {
-      //console.warn(`Looks like zeros...`);
-    }
 
     var ctx = this.ctx;
     // Copy the current canvas onto the temp canvas.
