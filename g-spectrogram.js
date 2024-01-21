@@ -385,9 +385,8 @@ renderFreqDomain: function () {
     canvas.width = this.width;
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
-    var startFreq = 440;
-    var nyquist = this.audioContext.sampleRate / 2;
-    var endFreq = nyquist - startFreq;
+    var startFreq = 20; // Set start frequency to 20Hz
+    var endFreq = 9000; // Set end frequency to 9000Hz
     var step = (endFreq - startFreq) / this.ticks;
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
