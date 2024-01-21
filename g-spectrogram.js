@@ -405,8 +405,10 @@ renderFreqDomain: function () {
             var melIndex = this.melScale(index, this.getFFTBinCount());
             // Never show 0 Hz.
             freq = Math.max(1, this.indexToFreq(melIndex));
+            label = this.formatFreq(freq);
+        } else {
+            label = this.formatFreq(freq);
         }
-        var label = this.formatFreq(freq);
         var units = this.formatUnits(freq);
         ctx.font = '16px Inconsolata';
         // Draw the value.
