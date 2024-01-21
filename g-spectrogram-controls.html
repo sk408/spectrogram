@@ -1,7 +1,7 @@
 <link rel="import" href="./bower_components/polymer/polymer.html">
 
 
-<polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color animate1">
+<polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color animate1 mic_select">
   <template>
     <style>
       :host {
@@ -46,6 +46,13 @@
     <label for="animate1">Animate</label>
     <input type="checkbox" id="animat1e" checked="{{animate1}}">
     </div> -->
+    <div class="mic-selector">
+      <label for="mic_select">Microphone</label>
+      <select id="mic_select" value="{{mic_select}}">
+        <template repeat="{{mic_select in mics}}">
+          <option value="{{mic_select.id}}">{{mic_select.label}}</option>
+        </template>
+      </select>
     <template if="{{labels}}">
       <div class="config">
       <label for="ticks">Number of ticks</label>

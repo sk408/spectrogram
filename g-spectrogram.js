@@ -89,19 +89,36 @@ createAudioGraph: async function() {
                 // Let the user select a microphone
                 let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
                 let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
-                selectedMic = this.mics[selectedMicIndex - 1]?.deviceId;
+                this.selectAndStartMic(this.mics[selectedMicIndex - 1]?.deviceId);
             } else {
-                selectedMic = this.mics[0]?.deviceId;
+                this.selectAndStartMic(this.mics[0]?.deviceId);
             }
-            const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            this.ctx = this.$.canvas.getContext('2d');
-            this.onStream(stream);
-            this.createDecibelMeter();
+            // const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
+            // const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            // this.ctx = this.$.canvas.getContext('2d');
+            // this.onStream(stream);
+            // this.createDecibelMeter();
         }
     } catch (e) {
         this.onStreamError(e);
     }
+},
+selectAndStartMic: async function(selected) {
+  // let selectedMic;
+  // if (this.mics.length > 1) {
+  //     // Let the user select a microphone
+  //     let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
+  //     let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
+  //     selectedMic = this.mics[selectedMicIndex - 1]?.deviceId;
+  // } else {
+  //     selectedMic = this.mics[0]?.deviceId;
+  // }
+
+  const constraints = { audio: { deviceId: selected ? { exact: selected } : undefined } };
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  this.ctx = this.$.canvas.getContext('2d');
+  this.onStream(stream);
+  this.createDecibelMeter();
 },
 aWeighting: function(frequency) {
   const f = frequency / 1000;
