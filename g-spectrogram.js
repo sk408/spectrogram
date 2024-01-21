@@ -462,7 +462,7 @@ freqToERB: function(f) {
         var x = this.width - 60;
         // Get the value for the current y coordinate.
         var label = this.formatFreq(freq*.8);
-        var units = this.formatUnits(freq);
+        var units = this.formatUnits(freq*.8);
         ctx.font = '16px Inconsolata';
         // Draw the value.
         ctx.textAlign = 'right';
