@@ -12,9 +12,9 @@ Polymer('g-spectrogram', {
 
   color: true,
   animate1: true,
-attachedCallback: async function() {
+  attachedCallback: async function () {
     this.tempCanvas = document.createElement('canvas'),
-    console.log('Created spectrogram');
+      console.log('Created spectrogram');
 
     // Require user gesture before creating audio context, etc.
     let debounce;
@@ -33,170 +33,169 @@ attachedCallback: async function() {
       const touchendY = event.changedTouches[0].screenY;
       const dx = touchendX - touchstartX;
       const dy = touchendY - touchstartY;
-      const dist = Math.sqrt(dx*dx + dy*dy); // distance
-  if (elapsedTime < 250 && elapsedTime > 5) {
-    event.preventDefault();
-  }
-	     if (!this.audioContext) { createAudioGraphDebounced(); } 
+      const dist = Math.sqrt(dx * dx + dy * dy); // distance
+      if (elapsedTime < 250 && elapsedTime > 5) {
+        event.preventDefault();
+      }
+      if (!this.audioContext) { createAudioGraphDebounced(); }
 
-  if (elapsedTime < 250 && elapsedTime > 1) {
-    createAudioGraphDebounced();
+      if (elapsedTime < 250 && elapsedTime > 1) {
+        createAudioGraphDebounced();
       }
     };
-  function onKeyDown(e)
-{
-	if (e.key === " ")
-		createAudioGraphDebounced();
-}
-	
-window.addEventListener('mousedown', function(event) {
-  if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
-    createAudioGraphDebounced();
-  }
-});
-  window.addEventListener("keydown", onKeyDown);
+    function onKeyDown(e) {
+      if (e.key === " ")
+        createAudioGraphDebounced();
+    }
+
+    window.addEventListener('mousedown', function (event) {
+      if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
+        createAudioGraphDebounced();
+      }
+    });
+    window.addEventListener("keydown", onKeyDown);
     window.addEventListener('touchstart', (event) => {
       touchstartX = event.changedTouches[0].screenX;
       touchstartY = event.changedTouches[0].screenY;
       time = new Date().getTime();
     });
     window.addEventListener('touchend', handleGesture);
-    window.addEventListener('touchmove', function(event) {
+    window.addEventListener('touchmove', function (event) {
       event.preventDefault();
     }, { passive: false });
   },
-	
-createAudioGraph: async function() {
+
+  createAudioGraph: async function () {
     if (this.audioContext) {
-      if(!this.animate1) {
+      if (!this.animate1) {
         this.animate1 = true;
         requestAnimationFrame(this.render.bind(this));
-      } else if(this.animate1) {
+      } else if (this.animate1) {
         this.animate1 = false;
-      }                                      
+      }
       return;
     }
-    this.audioContext = new AudioContext({sampleRate: 48000});
+    this.audioContext = new AudioContext({ sampleRate: 48000 });
     try {
-        if (!navigator.mediaDevices?.enumerateDevices) {
-            console.log("enumerateDevices() not supported.");
+      if (!navigator.mediaDevices?.enumerateDevices) {
+        console.log("enumerateDevices() not supported.");
+      } else {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        this.mics = devices.filter(device => device.kind === 'audioinput');
+
+        let selectedMic;
+        if (this.mics.length > 1) {
+          // Let the user select a microphone
+          let micOptions = this.mics.map((mic, index) => `${index + 1}: ${mic.label}`).join('\n');
+          let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
+          this.selectAndStartMic(this.mics[selectedMicIndex - 1]?.deviceId);
         } else {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            this.mics = devices.filter(device => device.kind === 'audioinput');
-
-            let selectedMic;
-            if (this.mics.length > 1) {
-                // Let the user select a microphone
-                let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
-                let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
-                this.selectAndStartMic(this.mics[selectedMicIndex - 1]?.deviceId);
-            } else {
-                this.selectAndStartMic(this.mics[0]?.deviceId);
-            }
-            // const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
-            // const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            // this.ctx = this.$.canvas.getContext('2d');
-            // this.onStream(stream);
-            // this.createDecibelMeter();
+          this.selectAndStartMic(this.mics[0]?.deviceId);
         }
+        // const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
+        // const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        // this.ctx = this.$.canvas.getContext('2d');
+        // this.onStream(stream);
+        // this.createDecibelMeter();
+      }
     } catch (e) {
-        this.onStreamError(e);
+      this.onStreamError(e);
     }
-},
-selectAndStartMic: async function(selected) {
-  // let selectedMic;
-  // if (this.mics.length > 1) {
-  //     // Let the user select a microphone
-  //     let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
-  //     let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
-  //     selectedMic = this.mics[selectedMicIndex - 1]?.deviceId;
-  // } else {
-  //     selectedMic = this.mics[0]?.deviceId;
-  // }
+  },
+  selectAndStartMic: async function (selected) {
+    // let selectedMic;
+    // if (this.mics.length > 1) {
+    //     // Let the user select a microphone
+    //     let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
+    //     let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
+    //     selectedMic = this.mics[selectedMicIndex - 1]?.deviceId;
+    // } else {
+    //     selectedMic = this.mics[0]?.deviceId;
+    // }
 
-  const constraints = { audio: { deviceId: selected ? { exact: selected } : undefined } };
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  this.ctx = this.$.canvas.getContext('2d');
-  this.onStream(stream);
-  this.createDecibelMeter();
-},
-aWeighting: function(frequency) {
-  const f = frequency / 1000;
-  const f2 = Math.pow(f, 2);
-  const f4 = Math.pow(f, 4);
-  const f8 = Math.pow(f, 8);
+    const constraints = { audio: { deviceId: selected ? { exact: selected } : undefined } };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    this.ctx = this.$.canvas.getContext('2d');
+    this.onStream(stream);
+    this.createDecibelMeter();
+  },
+  aWeighting: function (frequency) {
+    const f = frequency / 1000;
+    const f2 = Math.pow(f, 2);
+    const f4 = Math.pow(f, 4);
+    const f8 = Math.pow(f, 8);
 
-  let aWeighted;
+    let aWeighted;
 
-  if (f < 0.5) {
-    aWeighted = -122.02 + 20 * Math.log10(f) + 0.17 * Math.pow((0.5 - f), 2);
-  } else if (f >= 0.5 && f < 1) {
-    aWeighted = -2.00 - 6.4 * Math.pow((f - 0.5), 2);
-  } else if (f >= 1 && f < 2) {
-    aWeighted = 0;
-  } else if (f >= 2 && f < 4) {
-    aWeighted = -2.00 - 0.17 * Math.pow((f - 2), 2);
-  } else if (f >= 4 && f < 8) {
-    aWeighted = -3.50 - 0.15 * Math.pow((f - 4), 2);
-  } else if (f >= 8) {
-    aWeighted = -3.50 - 0.22 * Math.pow((f - 8), 2);
-  }
-
-  // Add a high-frequency roll-off
-  aWeighted -= 0.0006 * f8;
-
-  return aWeighted;
-},
-createDecibelMeter: function() {
-  console.log("test");
-//   setInterval(() => {
-//     alert(`Min value: ${this.minValue}, Max value: ${this.maxValue}`);
-//     // Reset min and max values for the next second
-//     minValue = Infinity;
-//     maxValue = -Infinity;
-// }, 5000);
-
-
-  // Function to update the decibel meter
-  var updateDecibelMeter = function() {
-    // Get the frequency data
-    this.analyser.getByteFrequencyData(this.freq);
-
-    // Calculate the volume in decibels
-    var sum = 0;
-    for (var i = 0; i < this.freq.length; i++) {
-      var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate the frequency of the current bin
-      var aWeighted = this.freq[i] + this.aWeighting(frequency); // Apply A-weighting
-      sum += Math.pow(10, aWeighted / 10);
+    if (f < 0.5) {
+      aWeighted = -122.02 + 20 * Math.log10(f) + 0.17 * Math.pow((0.5 - f), 2);
+    } else if (f >= 0.5 && f < 1) {
+      aWeighted = -2.00 - 6.4 * Math.pow((f - 0.5), 2);
+    } else if (f >= 1 && f < 2) {
+      aWeighted = 0;
+    } else if (f >= 2 && f < 4) {
+      aWeighted = -2.00 - 0.17 * Math.pow((f - 2), 2);
+    } else if (f >= 4 && f < 8) {
+      aWeighted = -3.50 - 0.15 * Math.pow((f - 4), 2);
+    } else if (f >= 8) {
+      aWeighted = -3.50 - 0.22 * Math.pow((f - 8), 2);
     }
-    var average = 10 * Math.log10(sum / this.freq.length);
-    var volumeInDb = 20 * Math.log10(average);
-  // Calibration offset
-var calibrationOffset = 20;
 
-// Apply the calibration offset
-volumeInDb += calibrationOffset;
+    // Add a high-frequency roll-off
+    aWeighted -= 0.0006 * f8;
 
-    // Update the decibel meter
-    let aboutDiv = document.getElementById('about');
-    aboutDiv.textContent = `Volume: ${volumeInDb.toFixed(2)} dB`;
-  
-    // Call this function again to update the decibel meter
-    setTimeout(updateDecibelMeter.bind(this),100);
-  };
+    return aWeighted;
+  },
+  createDecibelMeter: function () {
+    console.log("test");
+    //   setInterval(() => {
+    //     alert(`Min value: ${this.minValue}, Max value: ${this.maxValue}`);
+    //     // Reset min and max values for the next second
+    //     minValue = Infinity;
+    //     maxValue = -Infinity;
+    // }, 5000);
 
-  // Start updating the decibel meter
-  updateDecibelMeter.call(this);
-},
 
-  onStream: function(stream) {
+    // Function to update the decibel meter
+    var updateDecibelMeter = function () {
+      // Get the frequency data
+      this.analyser.getByteFrequencyData(this.freq);
+
+      // Calculate the volume in decibels
+      var sum = 0;
+      for (var i = 0; i < this.freq.length; i++) {
+        var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate the frequency of the current bin
+        var aWeighted = this.freq[i] + this.aWeighting(frequency); // Apply A-weighting
+        sum += Math.pow(10, aWeighted / 10);
+      }
+      var average = 10 * Math.log10(sum / this.freq.length);
+      var volumeInDb = 20 * Math.log10(average);
+      // Calibration offset
+      var calibrationOffset = 20;
+
+      // Apply the calibration offset
+      volumeInDb += calibrationOffset;
+
+      // Update the decibel meter
+      let aboutDiv = document.getElementById('about');
+      aboutDiv.textContent = `Volume: ${volumeInDb.toFixed(2)} dB`;
+
+      // Call this function again to update the decibel meter
+      setTimeout(updateDecibelMeter.bind(this), 100);
+    };
+
+    // Start updating the decibel meter
+    updateDecibelMeter.call(this);
+  },
+
+  onStream: function (stream) {
     console.log("test");
     var input = this.audioContext.createMediaStreamSource(stream);
     var bandpassFilter = this.audioContext.createBiquadFilter();
     bandpassFilter.type = 'bandpass';
     bandpassFilter.frequency.value = 4500; // Center frequency between 20Hz and 9000Hz
     bandpassFilter.Q.value = Math.sqrt((9000 - 20) / 2) / 4500; // Q factor for the given frequency range
-   
+
     var analyser = this.audioContext.createAnalyser();
     analyser.smoothingTimeConstant = 0;
     analyser.fftSize = this.fftsize;
@@ -211,7 +210,7 @@ volumeInDb += calibrationOffset;
 
     this.render();
   },
-  render: function() {
+  render: function () {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     var didResize = false;
@@ -232,7 +231,7 @@ volumeInDb += calibrationOffset;
     if (this.labels && didResize) {
       this.renderAxesLabels();
     }
-    if(this.animate1) {
+    if (this.animate1) {
       requestAnimationFrame(this.render.bind(this));
     }
     var now = new Date();
@@ -242,7 +241,7 @@ volumeInDb += calibrationOffset;
     this.lastRenderTime_ = now;
   },
 
-  renderTimeDomain: function() {
+  renderTimeDomain: function () {
     var times = new Uint8Array(this.analyser.frequencyBinCount);
     this.analyser.getByteTimeDomainData(times);
 
@@ -251,13 +250,13 @@ volumeInDb += calibrationOffset;
       var percent = value / 256;
       var barHeight = this.height * percent;
       var offset = this.height - barHeight - 1;
-      var barWidth = this.width/times.length;
+      var barWidth = this.width / times.length;
       this.ctx.fillStyle = 'black';
       this.ctx.fillRect(i * barWidth, offset, 1, 1);
     }
   },
 
-  renderFreqDomain: function() {
+  renderFreqDomain: function () {
     this.analyser.getByteFrequencyData(this.freq);
 
     var ctx = this.ctx;
@@ -267,13 +266,13 @@ volumeInDb += calibrationOffset;
     //console.log(this.$.canvas.height, this.tempCanvas.height);
     var tempCtx = this.tempCanvas.getContext('2d');
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
-    
+
     for (var i = 0; i < this.freq.length; i++) {
       var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate frequency
       var dB = this.freq[i]; // Get decibel value
       var aWeightedDB = dB + this.aWeighting(frequency); // Apply A-weighting
       this.freq[i] = aWeightedDB; // Replace original decibel value with A-weighted value
-  }
+    }
     // Iterate over the frequencies.
     for (var i = 0; i < this.freq.length; i++) {
       var value;
@@ -292,14 +291,14 @@ volumeInDb += calibrationOffset;
 
       // draw the line at the right side of the canvas
       ctx.fillRect(this.width - this.speed, this.height - y,
-                   this.speed, this.speed);
+        this.speed, this.speed);
     }
 
     // Translate the canvas.
     ctx.translate(-this.speed, 0);
     // Draw the copied image.
     ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-                  0, 0, this.width, this.height);
+      0, 0, this.width, this.height);
 
     // Reset the transformation matrix.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -309,18 +308,18 @@ volumeInDb += calibrationOffset;
    * Given an index and the total number of entries, return the
    * log-scaled value.
    */
-  logScale: function(index, total, opt_base) {
+  logScale: function (index, total, opt_base) {
     var base = opt_base || 2;
     var logmax = this.logBase(total + 1, base);
     var exp = logmax * index / total;
     return Math.round(Math.pow(base, exp) - 1);
   },
 
-  logBase: function(val, base) {
+  logBase: function (val, base) {
     return Math.log(val) / Math.log(base);
   },
 
-  renderAxesLabels: function() {
+  renderAxesLabels: function () {
     if (!this.audioContext) {
       return;
     }
@@ -329,7 +328,7 @@ volumeInDb += calibrationOffset;
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
     var startFreq = 440;
-    var nyquist = this.audioContext.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate / 2;
     var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
     var yLabelOffset = 5;
@@ -339,7 +338,7 @@ volumeInDb += calibrationOffset;
       // Get the y coordinate from the current label.
       var index = this.freqToIndex(freq);
       var percent = index / this.getFFTBinCount();
-      var y = (1-percent) * this.height;
+      var y = (1 - percent) * this.height;
       var x = this.width - 60;
       // Get the value for the current y coordinate.
       var label;
@@ -363,35 +362,35 @@ volumeInDb += calibrationOffset;
     }
   },
 
-  clearAxesLabels: function() {
+  clearAxesLabels: function () {
     var canvas = this.$.labels;
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, this.width, this.height);
   },
 
-  formatFreq: function(freq) {
-    return (freq >= 1000 ? (freq/1000).toFixed(1) : Math.round(freq));
+  formatFreq: function (freq) {
+    return (freq >= 1000 ? (freq / 1000).toFixed(1) : Math.round(freq));
   },
 
-  formatUnits: function(freq) {
+  formatUnits: function (freq) {
     return (freq >= 1000 ? 'KHz' : 'Hz');
   },
 
-  indexToFreq: function(index) {
-    var nyquist = this.audioContext.sampleRate/2;
-    return nyquist/this.getFFTBinCount() * index;
+  indexToFreq: function (index) {
+    var nyquist = this.audioContext.sampleRate / 2;
+    return nyquist / this.getFFTBinCount() * index;
   },
 
-  freqToIndex: function(frequency) {
-    var nyquist = this.audioContext.sampleRate/2;
-    return Math.round(frequency/nyquist * this.getFFTBinCount());
+  freqToIndex: function (frequency) {
+    var nyquist = this.audioContext.sampleRate / 2;
+    return Math.round(frequency / nyquist * this.getFFTBinCount());
   },
 
-  getFFTBinCount: function() {
+  getFFTBinCount: function () {
     return this.fftsize / 2;
   },
 
-  onStream: function(stream) {
+  onStream: function (stream) {
     var input = this.audioContext.createMediaStreamSource(stream);
     var analyser = this.audioContext.createAnalyser();
     analyser.smoothingTimeConstant = 0;
@@ -407,15 +406,15 @@ volumeInDb += calibrationOffset;
     this.render();
   },
 
-  onStreamError: function(e) {
+  onStreamError: function (e) {
     console.error(e);
   },
 
-  getGrayColor: function(value) {
+  getGrayColor: function (value) {
     return 'rgb(V, V, V)'.replace(/V/g, 255 - value);
   },
 
-  getFullColor: function(value) {
+  getFullColor: function (value) {
     // this.minValue = Math.min(this.minValue, value);
     // this.maxValue = Math.max(this.maxValue, value);
 
@@ -427,20 +426,19 @@ volumeInDb += calibrationOffset;
     var delta = percent * (toH - fromH);
     var hue = fromH + delta;
     return 'hsl(H, 100%, 50%)'.replace(/H/g, hue);
-},
-  logChanged: function() {
+  },
+  logChanged: function () {
+    if (this.labels) {
+      this.renderAxesLabels();
+    }
+  },
+  ticksChanged: function () {
     if (this.labels) {
       this.renderAxesLabels();
     }
   },
 
-  ticksChanged: function() {
-    if (this.labels) {
-      this.renderAxesLabels();
-    }
-  },
-
-  labelsChanged: function() {
+  labelsChanged: function () {
     if (this.labels) {
       this.renderAxesLabels();
     } else {
