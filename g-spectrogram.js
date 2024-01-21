@@ -122,6 +122,7 @@ aWeighting: function(frequency) {
   const f = frequency / 1000;
   const f2 = Math.pow(f, 2);
   const f4 = Math.pow(f, 4);
+  const f8 = Math.pow(f, 8);
 
   let aWeighted;
 
@@ -139,6 +140,9 @@ aWeighting: function(frequency) {
     aWeighted = -3.50 - 0.22 * Math.pow((f - 8), 2);
   }
 
+  // Add a high-frequency roll-off
+  aWeighted -= 0.0006 * f8;
+
   return aWeighted;
 },
 createDecibelMeter: function() {
@@ -153,7 +157,7 @@ createDecibelMeter: function() {
     var sum = 0;
     for (var i = 0; i < this.freq.length; i++) {
       var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate the frequency of the current bin
-      var aWeighted = this.freq[i] + aWeighting(frequency); // Apply A-weighting
+      var aWeighted = this.freq[i] + this.aWeighting(frequency); // Apply A-weighting
       sum += Math.pow(10, aWeighted / 10);
     }
     var average = 10 * Math.log10(sum / this.freq.length);
