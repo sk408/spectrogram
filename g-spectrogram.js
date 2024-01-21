@@ -269,8 +269,8 @@ melToFreq: function(mel) {
 melScale: function(index, total) {
   var proportion = index / total;
   var freq = proportion * 22050;
-  var mel = freqToMel(freq);
-  var scaledFreq = melToFreq(mel) / 22050 * total;
+  var mel = this.freqToMel(freq);
+  var scaledFreq = this.melToFreq(mel) / 22050 * total;
   return Math.round(scaledFreq);
 },
 
