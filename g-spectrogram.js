@@ -158,7 +158,12 @@ createDecibelMeter: function() {
     }
     var average = 10 * Math.log10(sum / this.freq.length);
     var volumeInDb = 20 * Math.log10(average);
-  
+  // Calibration offset
+var calibrationOffset = 20;
+
+// Apply the calibration offset
+volumeInDb += calibrationOffset;
+
     // Update the decibel meter
     let aboutDiv = document.getElementById('about');
     aboutDiv.textContent = `Volume: ${volumeInDb.toFixed(2)} dB`;
