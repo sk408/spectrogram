@@ -330,21 +330,21 @@ renderFreqDomain: function () {
 
   var startFreq = 20; // Set start frequency to 20Hz
   var endFreq = 9000; // Set end frequency to 9000Hz
-  var startMel = this.freqToMel(startFreq);
-  var endMel = this.freqToMel(endFreq);
+  var startERB = this.freqToERB(startFreq);
+  var endERB = this.freqToERB(endFreq);
 
-  // Create an array for the Mel scale
-  var melValues = new Array(this.freq.length).fill(0);
+  // Create an array for the ERB scale
+  var erbValues = new Array(this.freq.length).fill(0);
   
   for (var i = 0; i < this.freq.length; i++) {
     var value;
-    var melIndex;
+    var erbIndex;
     if (this.log) {
         var freq = this.indexToFreq(i);
-        melIndex = this.freqToMel(freq);
+        erbIndex = this.freqToERB(freq);
         value = this.freq[i];
-        // Fill the Mel scale array
-        melValues[Math.round(melIndex)] = value;
+        // Fill the ERB scale array
+        erbValues[Math.round(erbIndex)] = value;
     } else {
         value = this.freq[i];
     }
@@ -352,7 +352,7 @@ renderFreqDomain: function () {
     ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
     if (this.log) {
-        var percent = (melIndex - startMel) / (endMel - startMel);
+        var percent = (erbIndex - startERB) / (endERB - startERB);
         percent = Math.log10(percent * 9 + 1); // Apply a logarithmic scale
     } else {
         var percent = i / this.freq.length;
@@ -364,8 +364,8 @@ renderFreqDomain: function () {
       this.speed, this.speed);
   }
 
-  // Interpolate the Mel scale array
-  melValues = this.interpolateArray(melValues, this.freq.length);
+  // Interpolate the ERB scale array
+  erbValues = this.interpolateArray(erbValues, this.freq.length);
 
   // Translate the canvas.
   ctx.translate(-this.speed, 0);
@@ -376,26 +376,10 @@ renderFreqDomain: function () {
   // Reset the transformation matrix.
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 },
-
-// Function to interpolate an array to a new length
-interpolateArray: function (data, newLength) {
-  var linearInterpolate = function (before, after, atPoint) {
-    return before + (after - before) * atPoint;
-  };
-
-  var newData = new Array();
-  var springFactor = new Number((data.length - 1) / (newLength - 1));
-  newData[0] = data[0]; // for new allocation
-  for (var i = 1; i < newLength - 1; i++) {
-    var tmp = i * springFactor;
-    var before = new Number(Math.floor(tmp)).toFixed();
-    var after = new Number(Math.ceil(tmp)).toFixed();
-    var atPoint = tmp - before;
-    newData[i] = linearInterpolate(data[before], data[after], atPoint);
-  }
-  newData[newLength - 1] = data[data.length - 1]; // for new allocation
-  return newData;
+freqToERB: function(f) {
+  return 21.4 * Math.log10(4.37 * f / 1000 + 1);
 },
+
 
   /**
    * Given an index and the total number of entries, return the
@@ -464,22 +448,21 @@ interpolateArray: function (data, newLength) {
     var ctx = canvas.getContext('2d');
     var startFreq = 20; // Set start frequency to 20Hz
     var endFreq = 9000; // Set end frequency to 9000Hz
-    var startMel = this.freqToMel(startFreq);
-    var endMel = this.freqToMel(endFreq);
-    var step = (endMel - startMel) / this.ticks;
+    var startERB = this.freqToERB(startFreq);
+    var endERB = this.freqToERB(endFreq);
+    var step = (endERB - startERB) / this.ticks;
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
     for (var i = 0; i <= this.ticks; i++) {
-        var mel = startMel + (step * i);
-        var freq = this.melToFreq(mel);
+        var erb = startERB + (step * i);
+        var freq = this.erbToFreq(erb);
         // Get the y coordinate from the current label.
-        var percent = (mel - startMel) / (endMel - startMel);
+        var percent = (erb - startERB) / (endERB - startERB);
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
-        // Use the inverse mel scale to convert mel to frequency
-        var label = this.formatFreq(700 * (Math.pow(10, freq / 2595) - 1));
-        var units = this.formatUnits(700 * (Math.pow(10, freq / 2595) - 1));
+        var label = this.formatFreq(freq);
+        var units = this.formatUnits(freq);
         ctx.font = '16px Inconsolata';
         // Draw the value.
         ctx.textAlign = 'right';
@@ -491,6 +474,10 @@ interpolateArray: function (data, newLength) {
         ctx.fillRect(x + 40, y, 30, 2);
     }
 },
+erbToFreq: function(e) {
+  return (Math.pow(10, e / 21.4) - 1) / 4.37 * 1000;
+},
+
 
 
   clearAxesLabels: function () {
