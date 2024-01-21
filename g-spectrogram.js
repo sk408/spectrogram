@@ -454,7 +454,7 @@ interpolateArray: function (data, newLength) {
   //     ctx.fillRect(x + 40, y, 30, 2);
   //   }
   // },
-renderAxesLabels: function () {
+  renderAxesLabels: function () {
     if (!this.audioContext) {
         return;
     }
@@ -471,7 +471,7 @@ renderAxesLabels: function () {
     // Render the vertical frequency axis.
     for (var i = 0; i <= this.ticks; i++) {
         var mel = startMel + (step * i);
-        var freq = this.melToFreq(mel);
+        var freq = 700 * (Math.pow(10, mel / 2595) - 1); // Convert Mel scale to frequency
         // Get the y coordinate from the current label.
         var percent = (mel - startMel) / (endMel - startMel);
         var y = (1 - percent) * this.height;
@@ -490,7 +490,6 @@ renderAxesLabels: function () {
         ctx.fillRect(x + 40, y, 30, 2);
     }
 },
-
 
 
   clearAxesLabels: function () {
