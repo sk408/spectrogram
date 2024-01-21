@@ -415,8 +415,8 @@ Polymer('g-spectrogram', {
   },
 
   getFullColor: function (value) {
-    // this.minValue = Math.min(this.minValue, value);
-    // this.maxValue = Math.max(this.maxValue, value);
+    // Clamp value to range 0-255
+    value = Math.max(0, Math.min(255, value));
 
     var fromH = 99;
     var toH = 0;
@@ -426,7 +426,7 @@ Polymer('g-spectrogram', {
     var delta = percent * (toH - fromH);
     var hue = fromH + delta;
     return 'hsl(H, 100%, 50%)'.replace(/H/g, hue);
-  },
+},
   logChanged: function () {
     if (this.labels) {
       this.renderAxesLabels();
