@@ -149,6 +149,13 @@ aWeighting: function(frequency) {
 },
 createDecibelMeter: function() {
   console.log("test");
+  setInterval(() => {
+    console.log(`Min value: ${minValue}, Max value: ${maxValue}`);
+    // Reset min and max values for the next second
+    minValue = Infinity;
+    maxValue = -Infinity;
+}, 1000);
+
 
   // Function to update the decibel meter
   var updateDecibelMeter = function() {
@@ -278,8 +285,8 @@ volumeInDb += calibrationOffset;
         value = this.freq[i];
       }
 
-      // ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-ctx.fillStyle = (this.getGrayColor(value));
+      ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
+
       var percent = i / this.freq.length;
       var y = Math.round(percent * this.height);
 
@@ -409,6 +416,9 @@ ctx.fillStyle = (this.getGrayColor(value));
   },
 
   getFullColor: function(value) {
+    this.minValue = Math.min(this.minValue,value);
+    this.maxValue = Math.max(this.maxValue,value);
+
     var fromH = 99;
     var toH = 0;
     var percent = value / 255;
