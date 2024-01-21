@@ -471,14 +471,15 @@ interpolateArray: function (data, newLength) {
     // Render the vertical frequency axis.
     for (var i = 0; i <= this.ticks; i++) {
         var mel = startMel + (step * i);
-        var freq = 700 * (Math.pow(10, mel / 2595) - 1); // Convert Mel scale to frequency
+        var freq = this.melToFreq(mel);
         // Get the y coordinate from the current label.
         var percent = (mel - startMel) / (endMel - startMel);
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
-        var label = this.formatFreq(freq);
-        var units = this.formatUnits(freq);
+        // Use the inverse mel scale to convert mel to frequency
+        var label = this.formatFreq(700 * (Math.pow(10, freq / 2595) - 1));
+        var units = this.formatUnits(700 * (Math.pow(10, freq / 2595) - 1));
         ctx.font = '16px Inconsolata';
         // Draw the value.
         ctx.textAlign = 'right';
