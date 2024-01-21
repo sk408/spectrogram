@@ -387,27 +387,21 @@ renderFreqDomain: function () {
     var ctx = canvas.getContext('2d');
     var startFreq = 20; // Set start frequency to 20Hz
     var endFreq = 9000; // Set end frequency to 9000Hz
-    var step = (endFreq - startFreq) / this.ticks;
+    var startMel = this.freqToMel(startFreq);
+    var endMel = this.freqToMel(endFreq);
+    var step = (endMel - startMel) / this.ticks;
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
     for (var i = 0; i <= this.ticks; i++) {
-        var freq = startFreq + (step * i);
+        var mel = startMel + (step * i);
+        var freq = this.melToFreq(mel);
         // Get the y coordinate from the current label.
         var index = this.freqToIndex(freq);
         var percent = index / this.getFFTBinCount();
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
-        var label;
-        if (this.log) {
-            // Handle a Mel scale.
-            var melIndex = this.melScale(index, this.getFFTBinCount());
-            // Never show 0 Hz.
-            freq = Math.max(1, this.indexToFreq(melIndex));
-            label = this.formatFreq(freq);
-        } else {
-            label = this.formatFreq(freq);
-        }
+        var label = this.formatFreq(freq);
         var units = this.formatUnits(freq);
         ctx.font = '16px Inconsolata';
         // Draw the value.
