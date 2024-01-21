@@ -118,6 +118,17 @@ createAudioGraph: async function() {
         this.onStreamError(e);
     }
 },
+aWeighting: function(frequency) {
+  const A1000 = 1.2589;
+  const f = frequency / 1000;
+  const f2 = Math.pow(f, 2);
+  const f4 = Math.pow(f, 4);
+
+  const numerator = 12200 * 12200 * f4 * A1000;
+  const denominator = Math.sqrt((f2 + 20.6 * 20.6) * (f2 + 107.7 * 107.7)) * Math.sqrt((f2 + 737.9 * 737.9) * (f2 + 12200 * 12200));
+
+  return 20 * Math.log10(numerator / denominator);
+},
 createDecibelMeter: function() {
   console.log("test");
 
@@ -129,7 +140,9 @@ createDecibelMeter: function() {
     // Calculate the volume in decibels
     var sum = 0;
     for (var i = 0; i < this.freq.length; i++) {
-      sum += Math.pow(10, this.freq[i] / 10);
+      var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate the frequency of the current bin
+      var aWeighted = this.freq[i] + aWeighting(frequency); // Apply A-weighting
+      sum += Math.pow(10, aWeighted / 10);
     }
     var average = 10 * Math.log10(sum / this.freq.length);
     var volumeInDb = 20 * Math.log10(average);
