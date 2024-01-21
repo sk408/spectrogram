@@ -120,17 +120,6 @@ createAudioGraph: async function() {
 },
 createDecibelMeter: function() {
   console.log("test");
-  // console.log(stream);
-
-  // Create an AnalyserNode
-  // var analyser = this.analyser;
-
-  // // Connect the microphone stream to the AnalyserNode
-  // var source = this.audioContext.createMediaStreamSource(stream);
-  // source.connect(analyser);
-
-  // Create a Uint8Array to receive the frequency data
-  // var dataArray = this.freq;
 
   // Function to update the decibel meter
   var updateDecibelMeter = function() {
@@ -149,7 +138,7 @@ createDecibelMeter: function() {
     console.log(`Volume: ${volumeInDb.toFixed(2)} dB`);
 
     // Call this function again to update the decibel meter
-    setTimeout(requestAnimationFrame(updateDecibelMeter.bind(this)),100);
+    setTimeout(requestAnimationFrame(updateDecibelMeter.bind(this)),1000);
   };
 
   // Start updating the decibel meter
