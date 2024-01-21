@@ -272,19 +272,18 @@ Polymer('g-spectrogram', {
       var dB = this.freq[i]; // Get decibel value
       var aWeightedDB = dB + this.aWeighting(frequency); // Apply A-weighting
       this.freq[i] = aWeightedDB; // Replace original decibel value with A-weighted value
-      value=this.freq[i];
     }
-    // // Iterate over the frequencies.
-    // for (var i = 0; i < this.freq.length; i++) {
-    //   var value;
-    //   // Draw each pixel with the specific color.
-    //   if (this.log) {
-    //     logIndex = this.logScale(i, this.freq.length);
-    //     value = this.freq[logIndex];
-    //   } else {
-    //     value = this.freq[i];
-    //   }
-    
+    // Iterate over the frequencies.
+    for (var i = 0; i < this.freq.length; i++) {
+      // var value;
+      // // Draw each pixel with the specific color.
+      // if (this.log) {
+      //   logIndex = this.logScale(i, this.freq.length);
+      //   value = this.freq[logIndex];
+      // } else {
+      //   value = this.freq[i];
+      // }
+      var value = this.freq[i];
       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
       var percent = i / this.freq.length;
