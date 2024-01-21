@@ -477,6 +477,24 @@ freqToERB: function(f) {
 erbToFreq: function(e) {
   return (Math.pow(10, e / 21.4) - 1) / 4.37 * 1000;
 },
+interpolateArray: function (data, newLength) {
+  var linearInterpolate = function (before, after, atPoint) {
+    return before + (after - before) * atPoint;
+  };
+
+  var newData = new Array();
+  var springFactor = new Number((data.length - 1) / (newLength - 1));
+  newData[0] = data[0]; // for new allocation
+  for (var i = 1; i < newLength - 1; i++) {
+    var tmp = i * springFactor;
+    var before = new Number(Math.floor(tmp)).toFixed();
+    var after = new Number(Math.ceil(tmp)).toFixed();
+    var atPoint = tmp - before;
+    newData[i] = linearInterpolate(data[before], data[after], atPoint);
+  }
+  newData[newLength - 1] = data[data.length - 1]; // for new allocation
+  return newData;
+},
 
 
 
