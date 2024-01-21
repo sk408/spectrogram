@@ -333,6 +333,9 @@ renderFreqDomain: function () {
   var startMel = this.freqToMel(startFreq);
   var endMel = this.freqToMel(endFreq);
 
+  // Create an array for the Mel scale
+  var melValues = new Array(this.freq.length).fill(0);
+  
   for (var i = 0; i < this.freq.length; i++) {
     var value;
     var melIndex;
@@ -340,6 +343,8 @@ renderFreqDomain: function () {
         var freq = this.indexToFreq(i);
         melIndex = this.freqToMel(freq);
         value = this.freq[i];
+        // Fill the Mel scale array
+        melValues[Math.round(melIndex)] = value;
     } else {
         value = this.freq[i];
     }
@@ -359,6 +364,9 @@ renderFreqDomain: function () {
       this.speed, this.speed);
   }
 
+  // Interpolate the Mel scale array
+  melValues = this.interpolateArray(melValues, this.freq.length);
+
   // Translate the canvas.
   ctx.translate(-this.speed, 0);
   // Draw the copied image.
@@ -369,7 +377,26 @@ renderFreqDomain: function () {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 },
 
-  
+// Function to interpolate an array to a new length
+interpolateArray: function (data, newLength) {
+  var linearInterpolate = function (before, after, atPoint) {
+    return before + (after - before) * atPoint;
+  };
+
+  var newData = new Array();
+  var springFactor = new Number((data.length - 1) / (newLength - 1));
+  newData[0] = data[0]; // for new allocation
+  for (var i = 1; i < newLength - 1; i++) {
+    var tmp = i * springFactor;
+    var before = new Number(Math.floor(tmp)).toFixed();
+    var after = new Number(Math.ceil(tmp)).toFixed();
+    var atPoint = tmp - before;
+    newData[i] = linearInterpolate(data[before], data[after], atPoint);
+  }
+  newData[newLength - 1] = data[data.length - 1]; // for new allocation
+  return newData;
+},
+
   /**
    * Given an index and the total number of entries, return the
    * log-scaled value.
