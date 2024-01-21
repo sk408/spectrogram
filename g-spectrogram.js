@@ -461,7 +461,7 @@ freqToERB: function(f) {
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
-        var label = this.formatFreq(freq);
+        var label = this.formatFreq(freq*.8);
         var units = this.formatUnits(freq);
         ctx.font = '16px Inconsolata';
         // Draw the value.
