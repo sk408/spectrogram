@@ -84,20 +84,8 @@ createAudioGraph: async function() {
             console.log("enumerateDevices() not supported.");
         } else {
             // List cameras and microphones.
-            let mics = [];
-            await navigator.mediaDevices
-                .enumerateDevices()
-                .then((devices) => {
-                    devices.forEach((device) => {
-                        if(device.kind === 'audioinput') {
-                            mics.push(device);
-                            console.log(`Microphone: ${device.label} id = ${device.deviceId}`);
-                        }
-                    });
-                })
-                .catch((err) => {
-                    console.error(`${err.name}: ${err.message}`);
-                });
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            this.mics = devices.filter(device => device.kind === 'audioinput');
 
             let selectedMic;
             if (mics.length > 1) {
