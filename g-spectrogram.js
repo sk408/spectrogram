@@ -286,12 +286,12 @@ melScale: function(index, total) {
 
 //   for (var i = 0; i < this.freq.length; i++) {
 //       var value;
-//       // if (this.log) {
-//       //     var melIndex = this.melScale(i, this.freq.length);
-//       //     value = this.freq[melIndex];
-//       // } else {
-//       //     value = this.freq[i];
-//       // }
+//       if (this.log) {
+//           var melIndex = this.melScale(i, this.freq.length);
+//           value = this.freq[melIndex];
+//       } else {
+//           value = this.freq[i];
+//       }
 
 //       if (this.log) {
 //         logIndex = this.logScale(i, this.freq.length);
@@ -427,56 +427,44 @@ renderFreqDomain: function () {
   //     ctx.fillRect(x + 40, y, 30, 2);
   //   }
   // },
-renderFreqDomain: function () {
-  this.analyser.getByteFrequencyData(this.freq);
-
-  var ctx = this.ctx;
-  this.tempCanvas.width = this.width;
-  this.tempCanvas.height = this.height;
-  var tempCtx = this.tempCanvas.getContext('2d');
-  tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
-
-  var startFreq = 20; // Set start frequency to 20Hz
-  var endFreq = 9000; // Set end frequency to 9000Hz
-  var startMel = this.freqToMel(startFreq);
-  var endMel = this.freqToMel(endFreq);
-
-  for (var i = 0; i < this.freq.length; i++) {
-    var value;
-    var melIndex;
-    if (this.log) {
-        var freq = this.indexToFreq(i);
-        melIndex = this.freqToMel(freq);
-        value = this.freq[i];
-    } else {
-        value = this.freq[i];
+  renderAxesLabels: function () {
+    if (!this.audioContext) {
+        return;
     }
-
-    ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-
-    if (this.log) {
+    var canvas = this.$.labels;
+    canvas.width = this.width;
+    canvas.height = this.height;
+    var ctx = canvas.getContext('2d');
+    var startFreq = 20; // Set start frequency to 20Hz
+    var endFreq = 9000; // Set end frequency to 9000Hz
+    var startMel = this.freqToMel(startFreq);
+    var endMel = this.freqToMel(endFreq);
+    var step = (endMel - startMel) / this.ticks;
+    var yLabelOffset = 5;
+    // Render the vertical frequency axis.
+    for (var i = 0; i <= this.ticks; i++) {
+        var mel = startMel + (step * i);
+        var freq = this.melToFreq(mel);
+        // Get the y coordinate from the current label.
+        var index = this.freqToIndex(freq);
+        var melIndex = this.freqToMel(freq);
         var percent = (melIndex - startMel) / (endMel - startMel);
-        percent = Math.log10(percent * 9 + 1); // Apply a logarithmic scale
-    } else {
-        var percent = i / this.freq.length;
+        var y = (1 - percent) * this.height;
+        var x = this.width - 60;
+        // Get the value for the current y coordinate.
+        var label = this.formatFreq(freq);
+        var units = this.formatUnits(freq);
+        ctx.font = '16px Inconsolata';
+        // Draw the value.
+        ctx.textAlign = 'right';
+        ctx.fillText(label, x, y + yLabelOffset);
+        // Draw the units.
+        ctx.textAlign = 'left';
+        ctx.fillText(units, x + 10, y + yLabelOffset);
+        // Draw a tick mark.
+        ctx.fillRect(x + 40, y, 30, 2);
     }
-    var y = Math.round(percent * this.height);
-
-    // draw the line at the right side of the canvas
-    ctx.fillRect(this.width - this.speed, this.height - y,
-      this.speed, this.speed);
-  }
-
-  // Translate the canvas.
-  ctx.translate(-this.speed, 0);
-  // Draw the copied image.
-  ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-    0, 0, this.width, this.height);
-
-  // Reset the transformation matrix.
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
 },
-
 
   clearAxesLabels: function () {
     var canvas = this.$.labels;
