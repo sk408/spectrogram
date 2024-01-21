@@ -454,7 +454,7 @@ interpolateArray: function (data, newLength) {
   //     ctx.fillRect(x + 40, y, 30, 2);
   //   }
   // },
-  renderAxesLabels: function () {
+renderAxesLabels: function () {
     if (!this.audioContext) {
         return;
     }
@@ -473,9 +473,7 @@ interpolateArray: function (data, newLength) {
         var mel = startMel + (step * i);
         var freq = this.melToFreq(mel);
         // Get the y coordinate from the current label.
-        var index = this.freqToIndex(freq);
-        var melIndex = this.freqToMel(freq);
-        var percent = (melIndex - startMel) / (endMel - startMel);
+        var percent = (mel - startMel) / (endMel - startMel);
         var y = (1 - percent) * this.height;
         var x = this.width - 60;
         // Get the value for the current y coordinate.
@@ -492,6 +490,7 @@ interpolateArray: function (data, newLength) {
         ctx.fillRect(x + 40, y, 30, 2);
     }
 },
+
 
 
   clearAxesLabels: function () {
