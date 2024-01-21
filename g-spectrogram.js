@@ -120,39 +120,39 @@ createAudioGraph: async function() {
 createDecibelMeter: function(stream) {
   console.log("test");
   console.log(stream);
-  
-  // Create an AnalyserNode
-  var analyser = this.audioContext.createAnalyser();
 
-  // Connect the microphone stream to the AnalyserNode
-  var source = this.audioContext.createMediaStreamSource(stream);
-  source.connect(analyser);
+  // Create an AnalyserNode
+  // var analyser = this.analyser;
+
+  // // Connect the microphone stream to the AnalyserNode
+  // var source = this.audioContext.createMediaStreamSource(stream);
+  // source.connect(analyser);
 
   // Create a Uint8Array to receive the frequency data
-  var dataArray = new Uint8Array(analyser.frequencyBinCount);
+  // var dataArray = this.freq;
 
   // Function to update the decibel meter
   var updateDecibelMeter = function() {
     // Get the frequency data
-    analyser.getByteFrequencyData(dataArray);
+    this.analyser.getByteFrequencyData(this.freq);
 
     // Calculate the volume in decibels
     var sum = 0;
-    for (var i = 0; i < dataArray.length; i++) {
-      sum += dataArray[i];
+    for (var i = 0; i < this.freq.length; i++) {
+      sum += this.freq[i];
     }
-    var average = sum / dataArray.length;
+    var average = sum / this.freq.length;
     var volumeInDb = 20 * Math.log10(average);
 
     // Update the decibel meter
     console.log(`Volume: ${volumeInDb.toFixed(2)} dB`);
 
     // Call this function again to update the decibel meter
-    requestAnimationFrame(updateDecibelMeter);
+    requestAnimationFrame(updateDecibelMeter.bind(this));
   };
 
   // Start updating the decibel meter
-  updateDecibelMeter();
+  updateDecibelMeter.call(this);
 },
 
   onStream: function(stream) {
@@ -161,8 +161,7 @@ createDecibelMeter: function(stream) {
     bandpassFilter.type = 'bandpass';
     bandpassFilter.frequency.value = 4500; // Center frequency between 20Hz and 9000Hz
     bandpassFilter.Q.value = Math.sqrt((9000 - 20) / 2) / 4500; // Q factor for the given frequency range
-    this.createDecibelMeter(stream);
-
+   
     var analyser = this.audioContext.createAnalyser();
     analyser.smoothingTimeConstant = 0;
     analyser.fftSize = this.fftsize;
@@ -173,6 +172,7 @@ createDecibelMeter: function(stream) {
 
     this.analyser = analyser;
     this.freq = new Uint8Array(this.analyser.frequencyBinCount);
+    this.createDecibelMeter(stream);
 
     this.render();
   },
