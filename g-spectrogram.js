@@ -149,7 +149,7 @@ createDecibelMeter: function() {
     console.log(`Volume: ${volumeInDb.toFixed(2)} dB`);
 
     // Call this function again to update the decibel meter
-    requestAnimationFrame(updateDecibelMeter.bind(this));
+    setTimeout(requestAnimationFrame(updateDecibelMeter.bind(this)),100);
   };
 
   // Start updating the decibel meter
@@ -174,7 +174,7 @@ createDecibelMeter: function() {
 
     this.analyser = analyser;
     this.freq = new Uint8Array(this.analyser.frequencyBinCount);
-    this.createDecibelMeter();
+    // this.createDecibelMeter();
 
     this.render();
   },
