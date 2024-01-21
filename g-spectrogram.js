@@ -151,6 +151,7 @@ createDecibelMeter: function(stream) {
   // Start updating the decibel meter
   updateDecibelMeter();
 },
+
   onStream: function(stream) {
     var input = this.audioContext.createMediaStreamSource(stream);
     var bandpassFilter = this.audioContext.createBiquadFilter();
