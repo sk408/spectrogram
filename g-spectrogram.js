@@ -474,9 +474,18 @@ freqToERB: function(f) {
         ctx.fillRect(x + 40, y, 30, 2);
     }
 },
+// erbToFreq: function(e) {
+//   return (Math.pow(10, e / 21.4) - 1) / 4.37 * 1000;
+// },
 erbToFreq: function(e) {
-  return (Math.pow(10, e / 21.4) - 1) / 4.37 * 1000;
+  // Constants for the linear regression model
+  var a = 1.47; // Slope
+  var b = 0.7; // Intercept
+
+  // Convert ERB to frequency using the linear regression model
+  return a * e + b;
 },
+
 interpolateArray: function (data, newLength) {
   var linearInterpolate = function (before, after, atPoint) {
     return before + (after - before) * atPoint;
