@@ -118,6 +118,9 @@ createAudioGraph: async function() {
     }
 },
 createDecibelMeter: function(stream) {
+  console.log("test");
+  console.log(stream);
+  
   // Create an AnalyserNode
   var analyser = this.audioContext.createAnalyser();
 
