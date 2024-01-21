@@ -112,7 +112,7 @@ createAudioGraph: async function() {
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             this.ctx = this.$.canvas.getContext('2d');
             this.onStream(stream);
-            createDecibelMeter();
+            this.createDecibelMeter();
         }
     } catch (e) {
         this.onStreamError(e);
