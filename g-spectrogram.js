@@ -416,17 +416,18 @@ volumeInDb += calibrationOffset;
   },
 
   getFullColor: function(value) {
-    this.minValue = Math.min(this.minValue,value);
-    this.maxValue = Math.max(this.maxValue,value);
+    this.minValue = Math.min(this.minValue, value);
+    this.maxValue = Math.max(this.maxValue, value);
 
     var fromH = 99;
     var toH = 0;
-    var percent = value / 255;
+    var minInput = 0;
+    var maxInput = 1000;
+    var percent = (value - minInput) / (maxInput - minInput);
     var delta = percent * (toH - fromH);
     var hue = fromH + delta;
     return 'hsl(H, 100%, 50%)'.replace(/H/g, hue);
-  },
-  
+},
   logChanged: function() {
     if (this.labels) {
       this.renderAxesLabels();
