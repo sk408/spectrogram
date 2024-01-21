@@ -100,7 +100,9 @@ createAudioGraph: async function() {
                 });
 
             // Let the user select a microphone
-            let selectedMic = prompt("Please enter the id of the microphone you want to use", mics[0]?.deviceId);
+            let micOptions = mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
+            let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
+            let selectedMic = mics[selectedMicIndex - 1]?.deviceId;
             const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             this.ctx = this.$.canvas.getContext('2d');
