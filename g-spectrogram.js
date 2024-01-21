@@ -275,6 +275,50 @@ melScale: function(index, total) {
 },
 
 // Your existing renderFreqDomain function, with the Mel scale added
+renderFreqDomain: function () {
+  this.analyser.getByteFrequencyData(this.freq);
+
+  var ctx = this.ctx;
+  this.tempCanvas.width = this.width;
+  this.tempCanvas.height = this.height;
+  var tempCtx = this.tempCanvas.getContext('2d');
+  tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
+
+  for (var i = 0; i < this.freq.length; i++) {
+      var value;
+      // if (this.log) {
+      //     var melIndex = this.melScale(i, this.freq.length);
+      //     value = this.freq[melIndex];
+      // } else {
+      //     value = this.freq[i];
+      // }
+
+      if (this.log) {
+        logIndex = this.logScale(i, this.freq.length);
+        value = this.freq[logIndex];
+      } else {
+        value = this.freq[i];
+      }
+
+      ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
+
+      var percent = i / this.freq.length;
+      var y = Math.round(percent * this.height);
+
+      // draw the line at the right side of the canvas
+      ctx.fillRect(this.width - this.speed, this.height - y,
+        this.speed, this.speed);
+    }
+
+    // Translate the canvas.
+    ctx.translate(-this.speed, 0);
+    // Draw the copied image.
+    ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
+      0, 0, this.width, this.height);
+
+    // Reset the transformation matrix.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  },
 // renderFreqDomain: function () {
 //   this.analyser.getByteFrequencyData(this.freq);
 
@@ -285,88 +329,39 @@ melScale: function(index, total) {
 //   tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
 //   for (var i = 0; i < this.freq.length; i++) {
-//       var value;
-//       if (this.log) {
-//           var melIndex = this.melScale(i, this.freq.length);
-//           value = this.freq[melIndex];
-//       } else {
-//           value = this.freq[i];
-//       }
-
-//       if (this.log) {
-//         logIndex = this.logScale(i, this.freq.length);
-//         value = this.freq[logIndex];
-//       } else {
+//     var value;
+//     var melIndex;
+//     if (this.log) {
+//         melIndex = this.melScale(i, this.freq.length);
+//         value = this.freq[melIndex];
+//     } else {
 //         value = this.freq[i];
-//       }
-
-//       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-
-//       var percent = i / this.freq.length;
-//       var y = Math.round(percent * this.height);
-
-//       // draw the line at the right side of the canvas
-//       ctx.fillRect(this.width - this.speed, this.height - y,
-//         this.speed, this.speed);
 //     }
 
-//     // Translate the canvas.
-//     ctx.translate(-this.speed, 0);
-//     // Draw the copied image.
-//     ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-//       0, 0, this.width, this.height);
+//     ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
-//     // Reset the transformation matrix.
-//     ctx.setTransform(1, 0, 0, 1, 0, 0);
+//     if (this.log) {
+//         var percent = melIndex / this.melScale(this.freq.length, this.freq.length);
+//     } else {
+//         var percent = i / this.freq.length;
+//     }
+//     var y = Math.round(percent * this.height);
+
+//     // draw the line at the right side of the canvas
+//     ctx.fillRect(this.width - this.speed, this.height - y,
+//       this.speed, this.speed);
+// }
+
+// // Translate the canvas.
+// ctx.translate(-this.speed, 0);
+// // Draw the copied image.
+// ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
+//   0, 0, this.width, this.height);
+
+// // Reset the transformation matrix.
+// ctx.setTransform(1, 0, 0, 1, 0, 0);
 //   },
-renderFreqDomain: function () {
-  this.analyser.getByteFrequencyData(this.freq);
 
-  var ctx = this.ctx;
-  this.tempCanvas.width = this.width;
-  this.tempCanvas.height = this.height;
-  var tempCtx = this.tempCanvas.getContext('2d');
-  tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
-
-  var startFreq = 20; // Set start frequency to 20Hz
-  var endFreq = 9000; // Set end frequency to 9000Hz
-  var startMel = this.freqToMel(startFreq);
-  var endMel = this.freqToMel(endFreq);
-
-  for (var i = 0; i < this.freq.length; i++) {
-    var value;
-    var melIndex;
-    if (this.log) {
-        var freq = this.indexToFreq(i);
-        melIndex = this.freqToMel(freq);
-        value = this.freq[melIndex];
-    } else {
-        value = this.freq[i];
-    }
-
-    ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-
-    if (this.log) {
-        var percent = (melIndex - startMel) / (endMel - startMel);
-    } else {
-        var percent = i / this.freq.length;
-    }
-    var y = Math.round(percent * this.height);
-
-    // draw the line at the right side of the canvas
-    ctx.fillRect(this.width - this.speed, this.height - y,
-      this.speed, this.speed);
-  }
-
-  // Translate the canvas.
-  ctx.translate(-this.speed, 0);
-  // Draw the copied image.
-  ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-    0, 0, this.width, this.height);
-
-  // Reset the transformation matrix.
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-},
   
   /**
    * Given an index and the total number of entries, return the
