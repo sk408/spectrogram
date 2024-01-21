@@ -493,6 +493,7 @@ interpolateArray: function (data, newLength) {
     }
 },
 
+
   clearAxesLabels: function () {
     var canvas = this.$.labels;
     var ctx = canvas.getContext('2d');
