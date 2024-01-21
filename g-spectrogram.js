@@ -260,7 +260,13 @@ volumeInDb += calibrationOffset;
     //console.log(this.$.canvas.height, this.tempCanvas.height);
     var tempCtx = this.tempCanvas.getContext('2d');
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
-
+    
+    for (var i = 0; i < this.freq.length; i++) {
+      var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate frequency
+      var dB = this.freq[i]; // Get decibel value
+      var aWeightedDB = dB + this.aWeighting(frequency); // Apply A-weighting
+      this.freq[i] = aWeightedDB; // Replace original decibel value with A-weighted value
+  }
     // Iterate over the frequencies.
     for (var i = 0; i < this.freq.length; i++) {
       var value;
