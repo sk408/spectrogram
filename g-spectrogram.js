@@ -150,11 +150,11 @@ aWeighting: function(frequency) {
 createDecibelMeter: function() {
   console.log("test");
   setInterval(() => {
-    console.log(`Min value: ${minValue}, Max value: ${maxValue}`);
+    alert(`Min value: ${this.minValue}, Max value: ${this.maxValue}`);
     // Reset min and max values for the next second
     minValue = Infinity;
     maxValue = -Infinity;
-}, 1000);
+}, 5000);
 
 
   // Function to update the decibel meter
