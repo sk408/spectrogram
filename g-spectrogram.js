@@ -9,7 +9,7 @@ Polymer('g-spectrogram', {
   speed: 6,
   // FFT bin size,
   fftsize: 4096,
-  // oscillator: false,
+
   color: true,
   animate1: true,
 attachedCallback: async function() {
@@ -38,11 +38,9 @@ attachedCallback: async function() {
     event.preventDefault();
   }
 	     if (!this.audioContext) { createAudioGraphDebounced(); } 
-	   // alert(dist);
+
   if (elapsedTime < 250 && elapsedTime > 1) {
-  // if (event.target.type !== 'checkbox' && event.target.type !== 'range') {
     createAudioGraphDebounced();
-  // }
       }
     };
   function onKeyDown(e)
@@ -83,18 +81,17 @@ createAudioGraph: async function() {
         if (!navigator.mediaDevices?.enumerateDevices) {
             console.log("enumerateDevices() not supported.");
         } else {
-            // List cameras and microphones.
             const devices = await navigator.mediaDevices.enumerateDevices();
             this.mics = devices.filter(device => device.kind === 'audioinput');
 
             let selectedMic;
-            if (mics.length > 1) {
+            if (this.mics.length > 1) {
                 // Let the user select a microphone
-                let micOptions = mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
+                let micOptions = this.mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
                 let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
-                selectedMic = mics[selectedMicIndex - 1]?.deviceId;
+                selectedMic = this.mics[selectedMicIndex - 1]?.deviceId;
             } else {
-                selectedMic = mics[0]?.deviceId;
+                selectedMic = this.mics[0]?.deviceId;
             }
             const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
