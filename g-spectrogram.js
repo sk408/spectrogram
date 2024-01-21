@@ -278,8 +278,8 @@ volumeInDb += calibrationOffset;
         value = this.freq[i];
       }
 
-      ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
-
+      // ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
+ctx.fillStyle = (this.getGrayColor(value));
       var percent = i / this.freq.length;
       var y = Math.round(percent * this.height);
 
