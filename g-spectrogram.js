@@ -117,13 +117,47 @@ createAudioGraph: async function() {
         this.onStreamError(e);
     }
 },
+createDecibelMeter: function(stream) {
+  // Create an AnalyserNode
+  var analyser = this.audioContext.createAnalyser();
 
+  // Connect the microphone stream to the AnalyserNode
+  var source = this.audioContext.createMediaStreamSource(stream);
+  source.connect(analyser);
+
+  // Create a Uint8Array to receive the frequency data
+  var dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  // Function to update the decibel meter
+  var updateDecibelMeter = function() {
+    // Get the frequency data
+    analyser.getByteFrequencyData(dataArray);
+
+    // Calculate the volume in decibels
+    var sum = 0;
+    for (var i = 0; i < dataArray.length; i++) {
+      sum += dataArray[i];
+    }
+    var average = sum / dataArray.length;
+    var volumeInDb = 20 * Math.log10(average);
+
+    // Update the decibel meter
+    console.log(`Volume: ${volumeInDb.toFixed(2)} dB`);
+
+    // Call this function again to update the decibel meter
+    requestAnimationFrame(updateDecibelMeter);
+  };
+
+  // Start updating the decibel meter
+  updateDecibelMeter();
+},
   onStream: function(stream) {
     var input = this.audioContext.createMediaStreamSource(stream);
     var bandpassFilter = this.audioContext.createBiquadFilter();
     bandpassFilter.type = 'bandpass';
     bandpassFilter.frequency.value = 4500; // Center frequency between 20Hz and 9000Hz
     bandpassFilter.Q.value = Math.sqrt((9000 - 20) / 2) / 4500; // Q factor for the given frequency range
+    this.createDecibelMeter(stream);
 
     var analyser = this.audioContext.createAnalyser();
     analyser.smoothingTimeConstant = 0;
