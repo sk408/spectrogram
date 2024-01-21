@@ -127,10 +127,13 @@ createDecibelMeter: function() {
     this.analyser.getByteFrequencyData(this.freq);
 
     // Calculate the volume in decibels
-    let sum = this.freq.reduce((a, b) => a + b, 0);
-    var average = sum / this.freq.length;
+    var sum = 0;
+    for (var i = 0; i < this.freq.length; i++) {
+      sum += Math.pow(10, this.freq[i] / 10);
+    }
+    var average = 10 * Math.log10(sum / this.freq.length);
     var volumeInDb = 20 * Math.log10(average);
-
+  
     // Update the decibel meter
     let aboutDiv = document.getElementById('about');
     aboutDiv.textContent = `Volume: ${volumeInDb.toFixed(2)} dB`;
