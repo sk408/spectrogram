@@ -255,35 +255,44 @@ Polymer('g-spectrogram', {
       this.ctx.fillRect(i * barWidth, offset, 1, 1);
     }
   },
+// Function to convert frequency to Mel scale
+freqToMel: function(freq) {
+  return 2595 * Math.log10(1 + freq / 700);
+},
 
-  renderFreqDomain: function () {
-    this.analyser.getByteFrequencyData(this.freq);
+// Function to convert Mel scale to frequency
+melToFreq: function(mel) {
+  return 700 * (10**(mel / 2595) - 1);
+},
 
-    var ctx = this.ctx;
-    // Copy the current canvas onto the temp canvas.
-    this.tempCanvas.width = this.width;
-    this.tempCanvas.height = this.height;
-    //console.log(this.$.canvas.height, this.tempCanvas.height);
-    var tempCtx = this.tempCanvas.getContext('2d');
-    tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
+// Function to scale an index to the Mel scale
+melScale: function(index, total) {
+  var proportion = index / total;
+  var freq = proportion * 22050;
+  var mel = freqToMel(freq);
+  var scaledFreq = melToFreq(mel) / 22050 * total;
+  return Math.round(scaledFreq);
+},
 
-    for (var i = 0; i < this.freq.length; i++) {
-      var frequency = i * this.audioContext.sampleRate / this.analyser.fftSize; // Calculate frequency
-      var dB = this.freq[i]; // Get decibel value
-      var aWeightedDB = dB + this.aWeighting(frequency); // Apply A-weighting
-      this.freq[i] = aWeightedDB; // Replace original decibel value with A-weighted value
-    }
-    // Iterate over the frequencies.
-    for (var i = 0; i < this.freq.length; i++) {
-      // var value;
-      // // Draw each pixel with the specific color.
-      // if (this.log) {
-      //   logIndex = this.logScale(i, this.freq.length);
-      //   value = this.freq[logIndex];
-      // } else {
-      //   value = this.freq[i];
-      // }
-      var value = this.freq[i];
+// Your existing renderFreqDomain function, with the Mel scale added
+renderFreqDomain: function () {
+  this.analyser.getByteFrequencyData(this.freq);
+
+  var ctx = this.ctx;
+  this.tempCanvas.width = this.width;
+  this.tempCanvas.height = this.height;
+  var tempCtx = this.tempCanvas.getContext('2d');
+  tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
+
+  for (var i = 0; i < this.freq.length; i++) {
+      var value;
+      if (this.log) {
+          var melIndex = this.melScale(i, this.freq.length);
+          value = this.freq[melIndex];
+      } else {
+          value = this.freq[i];
+      }
+
       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
       var percent = i / this.freq.length;
