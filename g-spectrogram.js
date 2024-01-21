@@ -285,13 +285,13 @@ renderFreqDomain: function () {
   tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
   for (var i = 0; i < this.freq.length; i++) {
-      // var value;
-      // if (this.log) {
-      //     var melIndex = this.melScale(i, this.freq.length);
-      //     value = this.freq[melIndex];
-      // } else {
-      //     value = this.freq[i];
-      // }
+      var value;
+      if (this.log) {
+          var melIndex = this.melScale(i, this.freq.length);
+          value = this.freq[melIndex];
+      } else {
+          value = this.freq[i];
+      }
 
       if (this.log) {
         logIndex = this.logScale(i, this.freq.length);
@@ -335,9 +335,51 @@ renderFreqDomain: function () {
     return Math.log(val) / Math.log(base);
   },
 
+  // renderAxesLabels: function () {
+  //   if (!this.audioContext) {
+  //     return;
+  //   }
+  //   var canvas = this.$.labels;
+  //   canvas.width = this.width;
+  //   canvas.height = this.height;
+  //   var ctx = canvas.getContext('2d');
+  //   var startFreq = 440;
+  //   var nyquist = this.audioContext.sampleRate / 2;
+  //   var endFreq = nyquist - startFreq;
+  //   var step = (endFreq - startFreq) / this.ticks;
+  //   var yLabelOffset = 5;
+  //   // Render the vertical frequency axis.
+  //   for (var i = 0; i <= this.ticks; i++) {
+  //     var freq = startFreq + (step * i);
+  //     // Get the y coordinate from the current label.
+  //     var index = this.freqToIndex(freq);
+  //     var percent = index / this.getFFTBinCount();
+  //     var y = (1 - percent) * this.height;
+  //     var x = this.width - 60;
+  //     // Get the value for the current y coordinate.
+  //     var label;
+  //     if (this.log) {
+  //       // Handle a logarithmic scale.
+  //       var logIndex = this.logScale(index, this.getFFTBinCount());
+  //       // Never show 0 Hz.
+  //       freq = Math.max(1, this.indexToFreq(logIndex));
+  //     }
+  //     var label = this.formatFreq(freq);
+  //     var units = this.formatUnits(freq);
+  //     ctx.font = '16px Inconsolata';
+  //     // Draw the value.
+  //     ctx.textAlign = 'right';
+  //     ctx.fillText(label, x, y + yLabelOffset);
+  //     // Draw the units.
+  //     ctx.textAlign = 'left';
+  //     ctx.fillText(units, x + 10, y + yLabelOffset);
+  //     // Draw a tick mark.
+  //     ctx.fillRect(x + 40, y, 30, 2);
+  //   }
+  // },
   renderAxesLabels: function () {
     if (!this.audioContext) {
-      return;
+        return;
     }
     var canvas = this.$.labels;
     canvas.width = this.width;
@@ -350,33 +392,33 @@ renderFreqDomain: function () {
     var yLabelOffset = 5;
     // Render the vertical frequency axis.
     for (var i = 0; i <= this.ticks; i++) {
-      var freq = startFreq + (step * i);
-      // Get the y coordinate from the current label.
-      var index = this.freqToIndex(freq);
-      var percent = index / this.getFFTBinCount();
-      var y = (1 - percent) * this.height;
-      var x = this.width - 60;
-      // Get the value for the current y coordinate.
-      var label;
-      if (this.log) {
-        // Handle a logarithmic scale.
-        var logIndex = this.logScale(index, this.getFFTBinCount());
-        // Never show 0 Hz.
-        freq = Math.max(1, this.indexToFreq(logIndex));
-      }
-      var label = this.formatFreq(freq);
-      var units = this.formatUnits(freq);
-      ctx.font = '16px Inconsolata';
-      // Draw the value.
-      ctx.textAlign = 'right';
-      ctx.fillText(label, x, y + yLabelOffset);
-      // Draw the units.
-      ctx.textAlign = 'left';
-      ctx.fillText(units, x + 10, y + yLabelOffset);
-      // Draw a tick mark.
-      ctx.fillRect(x + 40, y, 30, 2);
+        var freq = startFreq + (step * i);
+        // Get the y coordinate from the current label.
+        var index = this.freqToIndex(freq);
+        var percent = index / this.getFFTBinCount();
+        var y = (1 - percent) * this.height;
+        var x = this.width - 60;
+        // Get the value for the current y coordinate.
+        var label;
+        if (this.log) {
+            // Handle a Mel scale.
+            var melIndex = this.melScale(index, this.getFFTBinCount());
+            // Never show 0 Hz.
+            freq = Math.max(1, this.indexToFreq(melIndex));
+        }
+        var label = this.formatFreq(freq);
+        var units = this.formatUnits(freq);
+        ctx.font = '16px Inconsolata';
+        // Draw the value.
+        ctx.textAlign = 'right';
+        ctx.fillText(label, x, y + yLabelOffset);
+        // Draw the units.
+        ctx.textAlign = 'left';
+        ctx.fillText(units, x + 10, y + yLabelOffset);
+        // Draw a tick mark.
+        ctx.fillRect(x + 40, y, 30, 2);
     }
-  },
+},
 
   clearAxesLabels: function () {
     var canvas = this.$.labels;
