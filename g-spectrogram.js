@@ -285,12 +285,19 @@ renderFreqDomain: function () {
   tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
   for (var i = 0; i < this.freq.length; i++) {
-      var value;
+      // var value;
+      // if (this.log) {
+      //     var melIndex = this.melScale(i, this.freq.length);
+      //     value = this.freq[melIndex];
+      // } else {
+      //     value = this.freq[i];
+      // }
+
       if (this.log) {
-          var melIndex = this.melScale(i, this.freq.length);
-          value = this.freq[melIndex];
+        logIndex = this.logScale(i, this.freq.length);
+        value = this.freq[logIndex];
       } else {
-          value = this.freq[i];
+        value = this.freq[i];
       }
 
       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
