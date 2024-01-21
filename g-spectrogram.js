@@ -99,10 +99,15 @@ createAudioGraph: async function() {
                     console.error(`${err.name}: ${err.message}`);
                 });
 
-            // Let the user select a microphone
-            let micOptions = mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
-            let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
-            let selectedMic = mics[selectedMicIndex - 1]?.deviceId;
+            let selectedMic;
+            if (mics.length > 1) {
+                // Let the user select a microphone
+                let micOptions = mics.map((mic, index) => `${index+1}: ${mic.label}`).join('\n');
+                let selectedMicIndex = prompt(`Please select a microphone:\n${micOptions}`);
+                selectedMic = mics[selectedMicIndex - 1]?.deviceId;
+            } else {
+                selectedMic = mics[0]?.deviceId;
+            }
             const constraints = { audio: { deviceId: selectedMic ? { exact: selectedMic } : undefined } };
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             this.ctx = this.$.canvas.getContext('2d');
